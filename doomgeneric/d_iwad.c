@@ -196,9 +196,33 @@ static char *GetRegistryString(registry_value_t *reg_val)
     DWORD valtype;
     char *result;
 
+    char* path = reg_val->path;
+    char* value = reg_val->value;
+#ifdef _WIN64
+	wchar_t wvalue[256];
+    wchar_t wpath[256];
+
+    size_t out;
+    size_t should_be = strlen(reg_val->path);
+    
+    if (mbstowcs_s(&out, wpath, 256, reg_val->path, should_be)
+        || out-1 != should_be)
+    {
+        return NULL;
+    }
+    should_be = strlen(reg_val->value);
+    if (mbstowcs_s(&out, wvalue, 256, reg_val->value, should_be)
+        || out-1 != should_be)
+    {
+        return NULL;
+    }
+    path = wpath;
+    value = wvalue;
+#endif
+
     // Open the key (directory where the value is stored)
 
-    if (RegOpenKeyEx(reg_val->root, reg_val->path,
+    if (RegOpenKeyEx(reg_val->root, path,
                      0, KEY_READ, &key) != ERROR_SUCCESS)
     {
         return NULL;
@@ -208,7 +232,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
     // Find the type and length of the string, and only accept strings.
 
-    if (RegQueryValueEx(key, reg_val->value,
+    if (RegQueryValueEx(key, value,
                         NULL, &valtype, NULL, &len) == ERROR_SUCCESS
      && valtype == REG_SZ)
     {
@@ -216,13 +240,29 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
         result = malloc(len);
 
-        if (RegQueryValueEx(key, reg_val->value, NULL, &valtype,
+        if (RegQueryValueEx(key, value, NULL, &valtype,
                             (unsigned char *) result, &len) != ERROR_SUCCESS)
         {
             free(result);
             result = NULL;
         }
     }
+#if _WIN64
+    // Convert wchar_t* back to char*
+    if (result != NULL)
+    {
+        char* actual = malloc(len);
+
+        if (wcstombs_s(&out, actual, len, result, len)
+            || out-1 != len)
+        {
+			free(result);
+			result = NULL;
+        }
+        free(result);
+        result = actual;
+    }
+#endif
 
     // Close the key
 
@@ -566,7 +606,7 @@ static void AddDoomWadPath(void)
 
 static void BuildIWADDirList(void)
 {
-#if ORIGCODE
+#if 1
     char *doomwaddir;
 
     if (iwad_dirs_built)
@@ -589,7 +629,7 @@ static void BuildIWADDirList(void)
 
     // Add dirs from DOOMWADPATH
 
-    AddDoomWadPath();
+    // AddDoomWadPath();
 
 #ifdef _WIN32
 
@@ -602,7 +642,7 @@ static void BuildIWADDirList(void)
 
     // Check for GUS patches installed with the BFG edition!
 
-    CheckSteamGUSPatches();
+    // CheckSteamGUSPatches();
 
 #else
 
