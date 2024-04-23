@@ -1082,7 +1082,7 @@ static void D_Endoom(void)
 
     I_Endoom(endoom);
 
-	exit(0);
+    DG_Exit(0);
 }
 
 #if ORIGCODE
