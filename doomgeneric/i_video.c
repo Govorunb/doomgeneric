@@ -160,7 +160,8 @@ void cmap_to_fb(uint8_t * out, uint8_t * in, int in_pixels)
         r = (uint16_t)(c.r >> (8 - s_Fb.red.length));
         g = (uint16_t)(c.g >> (8 - s_Fb.green.length));
         b = (uint16_t)(c.b >> (8 - s_Fb.blue.length));
-        pix = r << s_Fb.red.offset;
+        pix  = 255 << s_Fb.transp.offset;
+        pix |= r << s_Fb.red.offset;
         pix |= g << s_Fb.green.offset;
         pix |= b << s_Fb.blue.offset;
 

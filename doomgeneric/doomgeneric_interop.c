@@ -1,5 +1,7 @@
 #include "doomgeneric.h"
+#include "m_argv.h"
 #include "doomgeneric_interop.h"
+#include <string.h>
 
 void DG_Init()
 {
@@ -10,7 +12,7 @@ void DG_Init()
 void DG_DrawFrame()
 {
 	if (!Callbacks->DrawFrame) return;
-	Callbacks->DrawFrame(DG_ScreenBuffer);
+	Callbacks->DrawFrame(DG_ScreenBuffer, SCREENBUFFER_SIZE);
 }
 
 void DG_SleepMs(uint32_t ms)
@@ -43,18 +45,46 @@ void DG_Exit(int exit_code)
 	Callbacks->Exit(exit_code);
 }
 
-void SetCallbacks(dg_callbacks_t* callbacks)
+void DG_Log(const char* message)
+{
+	if (!Callbacks->Log) return;
+	Callbacks->Log(message);
+}
+
+__declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks)
 {
 	Callbacks = callbacks;
 }
 
-int Create(int argc, char** argv)
+// don't rely on managed caller to pin argv
+static char** stored_argv = NULL;
+__declspec(dllexport) int Create(int argc, char** argv)
 {
 	if (!Callbacks->Init) return DG_NO_CALLBACKS;
-	doomgeneric_Create(argc, argv);
+
+	stored_argv = malloc(argc * sizeof(char*));
+	if (!stored_argv) return DG_MALLOC_FAILED;
+
+	for (int i = 0; i < argc; i++)
+	{
+		char* arg = malloc(strlen(argv[i]) + 1);
+		if (!arg)
+		{
+			for (int j = 0; j < i; j++)
+			{
+				free(stored_argv[j]);
+			}
+			return DG_MALLOC_FAILED;
+		}
+
+		strcpy(arg, argv[i]);
+		stored_argv[i] = arg;
+	}
+	doomgeneric_Create(argc, stored_argv);
+	return DG_SUCCESS;
 }
 
-void Tick()
+__declspec(dllexport) void Tick()
 {
 	doomgeneric_Tick();
 }
