@@ -29,6 +29,10 @@ uint32_t DG_GetTicksMs();
 // Return 1 if any processable key was pressed, and 0 otherwise.
 // Assign 1 or 0 to pressed.
 int DG_GetKey(int* pressed, unsigned char* key);
+// For deltax and deltay: return the difference since the last call.
+// For left, right, and middle: 0/1 if (not) currently pressed.
+// For the mouse wheel - positive for up, 0 for none (not scrolling), negative for down.
+void DG_GetMouse(int* deltax, int* deltay, int* left, int* right, int* middle, int* mwheel);
 // Some WADs will set the window title on load.
 // This function is optional.
 void DG_SetWindowTitle(const char* title);

@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef void(*InitCallback)(int resX, int resY);
 typedef void(*DrawFrameCallback)(unsigned char* screen_buffer, int buffer_bytes);
 typedef void(*SleepCallback)(uint32_t millis);
 typedef uint32_t(*GetTicksMillisCallback)();
 typedef boolean(*GetKeyCallback)(boolean* pressed, unsigned char* doomKey);
+typedef void(*GetMouseCallback)(int* deltax, int* deltay, boolean* left, boolean* right, boolean* middle, int* mwheel);
 typedef void(*SetWindowTitleCallback)(const char* title);
 typedef void(*ExitCallback)(int exit_code);
 typedef void(*LogCallback)(const char* message);
@@ -17,6 +17,7 @@ typedef struct DGCallbacks {
 	SleepCallback Sleep;
 	GetTicksMillisCallback GetTicksMs;
 	GetKeyCallback GetKey;
+	GetMouseCallback GetMouse;
 	SetWindowTitleCallback SetWindowTitle;
 	ExitCallback Exit;
 	LogCallback Log;

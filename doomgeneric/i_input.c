@@ -40,6 +40,7 @@
 #include "z_zone.h"
 
 #include "doomgeneric.h"
+#include "m_controls.h"
 
 int vanilla_keyboard_mapping = 1;
 
@@ -322,6 +323,30 @@ void I_GetEvent(void)
             break;
         }
     }
+
+    int deltax = 0;
+    int deltay = 0;
+	int left = 0;
+	int right = 0;
+    int middle = 0;
+    int wheel = 0;
+
+    DG_GetMouse(&deltax, &deltay, &left, &right, &middle, &wheel);
+    event.type = ev_mouse;
+    event.data1 = 0;
+    // we don't send mouse button deltas
+    // (i.e. "pressed this frame"/"released this frame")
+    // because processing this event will set all buttons at once
+    if (left) event.data1 |= 1;
+	if (right) event.data1 |= 2;
+	if (middle) event.data1 |= 4;
+    if (wheel > 0) event.data1 |= 1 << mousebnextweapon;
+    else if (wheel < 0) event.data1 |= 1 << mousebprevweapon;
+    event.data2 = deltax;
+	event.data3 = deltay;
+    event.data4 = 0;
+
+	D_PostEvent(&event);
 
 
                 /*

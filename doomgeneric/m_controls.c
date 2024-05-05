@@ -94,17 +94,17 @@ int key_invdrop   = KEY_BACKSPACE;
 
 int mousebfire = 0;
 int mousebstrafe = 1;
-int mousebforward = 2;
+int mousebforward = -1;
 
 int mousebjump = -1;
 
 int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
-int mousebuse = -1;
+int mousebuse = 2;
 
-int mousebprevweapon = -1;
-int mousebnextweapon = -1;
+int mousebprevweapon = 6;
+int mousebnextweapon = 7;
 
 
 int key_message_refresh = KEY_ENTER;
@@ -195,7 +195,7 @@ int joybmenu = -1;
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
-int dclick_use = 1;
+int dclick_use = 0;
  
 // 
 // Bind all of the common controls used by Doom and all other games.

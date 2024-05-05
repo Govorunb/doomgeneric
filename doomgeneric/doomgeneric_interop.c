@@ -12,7 +12,7 @@ void DG_Init()
 void DG_DrawFrame()
 {
 	if (!Callbacks->DrawFrame) return;
-	Callbacks->DrawFrame(DG_ScreenBuffer, SCREENBUFFER_SIZE);
+	Callbacks->DrawFrame((unsigned char *)DG_ScreenBuffer, SCREENBUFFER_SIZE);
 }
 
 void DG_SleepMs(uint32_t ms)
@@ -31,6 +31,12 @@ int DG_GetKey(int* pressed, unsigned char* doomKey)
 {
 	if (!Callbacks->GetKey) return 0;
 	return Callbacks->GetKey(pressed, doomKey);
+}
+
+void DG_GetMouse(int* deltax, int* deltay, int* left, int* right, int* middle, int* mwheel)
+{
+	if (!Callbacks->GetMouse) return;
+	Callbacks->GetMouse(deltax, deltay, left, right, middle, mwheel);
 }
 
 void DG_SetWindowTitle(const char* title)
