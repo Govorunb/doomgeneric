@@ -1081,7 +1081,7 @@ static void D_Endoom(void)
     endoom = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
     I_Endoom(endoom);
-
+    // I_ShutdownGraphics();
     DG_Exit(0);
 }
 
