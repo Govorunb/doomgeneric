@@ -5,55 +5,55 @@
 
 void DG_Init()
 {
-	if (!Callbacks->Init) return;
+	if (!Callbacks || !Callbacks->Init) return;
 	Callbacks->Init(DOOMGENERIC_RESX, DOOMGENERIC_RESY);
 }
 
 void DG_DrawFrame()
 {
-	if (!Callbacks->DrawFrame) return;
+	if (!Callbacks || !Callbacks->DrawFrame) return;
 	Callbacks->DrawFrame((unsigned char *)DG_ScreenBuffer, SCREENBUFFER_SIZE);
 }
 
 void DG_SleepMs(uint32_t ms)
 {
-	if (!Callbacks->Sleep) return;
+	if (!Callbacks || !Callbacks->Sleep) return;
 	Callbacks->Sleep(ms);
 }
 
 uint32_t DG_GetTicksMs()
 {
-	if (!Callbacks->GetTicksMs) return 0;
+	if (!Callbacks || !Callbacks->GetTicksMs) return 0;
 	return Callbacks->GetTicksMs();
 }
 
 int DG_GetKey(int* pressed, unsigned char* doomKey)
 {
-	if (!Callbacks->GetKey) return 0;
+	if (!Callbacks || !Callbacks->GetKey) return 0;
 	return Callbacks->GetKey(pressed, doomKey);
 }
 
 void DG_GetMouse(int* deltax, int* deltay, int* left, int* right, int* middle, int* mwheel)
 {
-	if (!Callbacks->GetMouse) return;
+	if (!Callbacks || !Callbacks->GetMouse) return;
 	Callbacks->GetMouse(deltax, deltay, left, right, middle, mwheel);
 }
 
 void DG_SetWindowTitle(const char* title)
 {
-	if (!Callbacks->SetWindowTitle) return;
+	if (!Callbacks || !Callbacks->SetWindowTitle) return;
 	Callbacks->SetWindowTitle(title);
 }
 
 void DG_Exit(int exit_code)
 {
-	if (!Callbacks->Exit) return;
+	if (!Callbacks || !Callbacks->Exit) return;
 	Callbacks->Exit(exit_code);
 }
 
 void DG_Log(const char* message)
 {
-	if (!Callbacks->Log) return;
+	if (!Callbacks || !Callbacks->Log) return;
 	Callbacks->Log(message);
 }
 
@@ -66,7 +66,7 @@ __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks)
 static char** stored_argv = NULL;
 __declspec(dllexport) int Create(int argc, char** argv)
 {
-	if (!Callbacks->Init) return DG_NO_CALLBACKS;
+	if (!Callbacks || !Callbacks->Init) return DG_NO_CALLBACKS;
 
 	stored_argv = malloc(argc * sizeof(char*));
 	if (!stored_argv) return DG_MALLOC_FAILED;

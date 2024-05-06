@@ -155,6 +155,8 @@
     <ClCompile Include="doomdef.c" />
     <ClCompile Include="doomgeneric.c" />
     <ClCompile Include="doomgeneric_interop.c" />
+    <ClCompile Include="doomgeneric_audio.c" />
+    <ClCompile Include="doomgeneric_interop_audio.c" />
     <ClCompile Include="doomstat.c" />
     <ClCompile Include="dstrings.c" />
     <ClCompile Include="dummy.c" />
@@ -183,6 +185,7 @@
     <ClCompile Include="i_timer.c" />
     <ClCompile Include="i_video.c" />
     <ClCompile Include="memio.c" />
+    <ClCompile Include="mus2mid.c" />
     <ClCompile Include="m_argv.c" />
     <ClCompile Include="m_bbox.c" />
     <ClCompile Include="m_cheat.c" />
@@ -247,6 +250,8 @@
     <ClInclude Include="doomfeatures.h" />
     <ClInclude Include="doomgeneric.h" />
     <ClInclude Include="doomgeneric_interop.h" />
+    <ClInclude Include="doomgeneric_audio.h" />
+    <ClInclude Include="doomgeneric_interop_audio.h" />
     <ClInclude Include="doomkeys.h" />
     <ClInclude Include="doomstat.h" />
     <ClInclude Include="doomtype.h" />

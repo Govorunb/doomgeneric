@@ -20,7 +20,7 @@
 #ifndef __I_SWAP__
 #define __I_SWAP__
 
-#ifdef FEATURE_SOUND
+#if SDL // please do not use the FEATURE_SOUND flag as a HAVE_SDL flag
 
 #include <SDL_endian.h>
 
