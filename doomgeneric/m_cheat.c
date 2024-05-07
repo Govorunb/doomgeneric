@@ -48,10 +48,14 @@ cht_CheckCheat
         // and verifying.  reset back to the beginning 
         // if a key is wrong
 
-        if (key == cht->sequence[cht->chars_read])
-            ++cht->chars_read;
-        else
-            cht->chars_read = 0;
+        // hastily written check to care only about letter keys
+        if (key >= 'a' && key <= 'z')
+        {
+            if (key == cht->sequence[cht->chars_read])
+                ++cht->chars_read;
+            else
+                cht->chars_read = 0;
+        }
         
         cht->param_chars_read = 0;
     }

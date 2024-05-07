@@ -67,7 +67,7 @@ extern boolean		chat_on;		// in heads-up code
 //
 // defaulted values
 //
-int			mouseSensitivity = 5;
+int			mouseSensitivity = 8;
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -244,7 +244,7 @@ menuitem_t MainMenu[]=
     {1,"M_NGAME",M_NewGame,'n'},
     {1,"M_OPTION",M_Options,'o'},
     {1,"M_LOADG",M_LoadGame,'l'},
-    {1,"M_SAVEG",M_SaveGame,'s'},
+    {1,"M_SAVEG",M_SaveGame,'v'}, // changed from 's' to avoid doubling input on WASD
     // Another hickup with Special edition.
     {1,"M_RDTHIS",M_ReadThis,'r'},
     {1,"M_QUITG",M_QuitDOOM,'q'}
@@ -346,11 +346,11 @@ menuitem_t OptionsMenu[]=
     {1,"M_ENDGAM",	M_EndGame,'e'},
     {1,"M_MESSG",	M_ChangeMessages,'m'},
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
+    {2,"M_SCRNSZ",	M_SizeDisplay,'z'},
     {-1,"",0,'\0'},
     {2,"M_MSENS",	M_ChangeSensitivity,'m'},
     {-1,"",0,'\0'},
-    {1,"M_SVOL",	M_Sound,'s'}
+    {1,"M_SVOL",	M_Sound,'v'}
 };
 
 menu_t  OptionsDef =
@@ -422,7 +422,7 @@ enum
 
 menuitem_t SoundMenu[]=
 {
-    {2,"M_SFXVOL",M_SfxVol,'s'},
+    {2,"M_SFXVOL",M_SfxVol,'v'},
     {-1,"",0,'\0'},
     {2,"M_MUSVOL",M_MusicVol,'m'},
     {-1,"",0,'\0'}
@@ -1793,7 +1793,7 @@ boolean M_Responder (event_t* ev)
 
 	return true;
     }
-    else if (key == key_menu_left)
+    else if (key == key_menu_left || key == key_strafeleft)
     {
         // Slide slider left
 
@@ -1805,7 +1805,7 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
-    else if (key == key_menu_right)
+    else if (key == key_menu_right || key == key_straferight)
     {
         // Slide slider right
 
