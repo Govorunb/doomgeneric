@@ -70,13 +70,17 @@ static void LoadSound(sfxinfo_t* sfxinfo) {
 
 	sfxdata_t* sfx = (sfxdata_t*)Z_Malloc(sizeof(sfxdata_t), PU_STATIC, 0);
 	sfx->sample_rate = (data[3] << 8) | data[2];
-    sfx->num_samples = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
+    unsigned int num_pcm8_bytes = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
 
     /* author note: forgive me for this transgression
        however, in my particular use case (fmod) i am required to keep the padding */
     // after header, first and last 16 bytes are padding
-    //sfx->num_samples -= 32;
-    sfx->data = ExpandSoundData(data + 8 /* + 16 */, sfx->num_samples);
+    sfx->data = ExpandSoundData(data + 8 /* + 16 */, num_pcm8_bytes);
+    sfx->num_samples = num_pcm8_bytes - 32;
+    //Log("loaded sfx %s", sfxinfo->name);
+    //Log("  lump %d, length %d, sample rate %d, num samples %d (%d bytes)", lumpnum, lumplen-8, sfx->sample_rate, sfx->num_samples, sfx->num_samples * 2);
+    //Log("  data %p, %d bytes", sfx->data, num_bytes);
+    //Log("  starts at %p, ends at %p", sfx->data + 16, sfx->data + 16 + sfx->num_samples * 2);
     W_ReleaseLumpNum(lumpnum);
     
     sfxinfo->driver_data = sfx;
