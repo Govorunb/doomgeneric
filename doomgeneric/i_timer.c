@@ -83,7 +83,7 @@ void I_Sleep(int ms)
 
 void I_WaitVBL(int count)
 {
-    //I_Sleep((count * 1000) / 70);
+    I_Sleep(count * 1000 / (TICRATE * 2));
 }
 
 

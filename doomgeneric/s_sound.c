@@ -147,8 +147,14 @@ void S_Init(int sfxVolume, int musicVolume)
 
 void S_Shutdown(void)
 {
-    I_ShutdownSound();
-    I_ShutdownMusic();
+    /*
+    for (int i = 0; i < snd_channels; i++) {
+        S_StopChannel(i);
+    }
+    I_StopSong();
+    */
+    //I_ShutdownSound();
+    //I_ShutdownMusic();
 }
 
 static void S_StopChannel(int cnum)
