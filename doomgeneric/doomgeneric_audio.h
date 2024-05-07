@@ -1,5 +1,6 @@
 #include "i_sound.h"
 #include "doomfeatures.h"
+#include "doomgeneric.h"
 
 #ifdef FEATURE_SOUND
 

@@ -41,4 +41,8 @@ void DG_Exit(int exit_code);
 // Optional log function for debugging.
 void DG_Log(const char* message);
 
+// Helper for logging formatted messages.
+// It's used internally so you don't need to implement this - it calls DG_Log.
+void Log(const char* format, ...);
+
 #endif //DOOM_GENERIC
