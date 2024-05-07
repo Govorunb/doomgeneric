@@ -1,67 +1,40 @@
-# doomgeneric
-The purpose of doomgeneric is to make porting Doom easier.
-Of course Doom is already portable but with doomgeneric it is possible with just a few functions.
+# doomgeneric interop fork
+This [doomgeneric](https://github.com/ozkl/doomgeneric) fork is focused on embedding Doom into managed hosts through callbacks. Feel free to read [the original repo's README](https://github.com/ozkl/doomgeneric/blob/master/README.md) for more information on doomgeneric.
 
-To try it you will need a WAD file (game data). If you don't own the game, shareware version is freely available (doom1.wad).
+# How do I start?
+Implement these callbacks in your host environment.
 
-# porting
-Create a file named doomgeneric_yourplatform.c and just implement these functions to suit your platform.
-* DG_Init
-* DG_DrawFrame
-* DG_SleepMs
-* DG_GetTicksMs
-* DG_GetKey
+|Function|Description|Notes|
+|--------|-----------|-----|
+|`void Init(int resX, int resY)`|Initialize your platfrom (create window, framebuffer, etc...).|
+|`void DrawFrame(byte* screen_buffer, int buffer_bytes)`|Frame is ready in DG_ScreenBuffer. Copy it to your platform's screen.|The frame is drawn upside down, so you'll need to flip your screen.|
+|`void Sleep(uint32 millis)`|Sleep in milliseconds.|I recommend running the Doom loop in a separate thread so you can suspend it.|
+|`uint32 GetTicksMillis()`|Milliseconds elapsed since a fixed point (e.g. launch).||
+|`bool GetKey(out bool* pressed, out char* key)`|Provide keyboard events.|If there's a new key press/release event to process, assign the `pressed` (`true` for down, `false` for up) and `key` ([DOOMKEY](https://github.com/Govorunb/doomgeneric/blob/b3336ce013865e9f1318ebb454b84a397784bdf4/doomgeneric/doomkeys.h) or [ASCII character](https://github.com/Govorunb/doomgeneric/blob/b3336ce013865e9f1318ebb454b84a397784bdf4/doomgeneric/m_controls.c)) values and return `true`.|
+|`void GetMouse(out int* deltaX, out int* deltaY, out bool* left, out bool* right, out bool* middle, out int* wheelDelta)`|Optional. Provide mouse input.|`deltaX`/`deltaY` should be the change in pointer location since the last call to `GetMouse`; `left`, `right`, and `middle` are mouse buttons (`true` if pressed down); `wheelDelta` should be negative if scrolling down, positive if scrolling up, and 0 if no scrolling occurred.
+|`void SetWindowTitle(char* title)`|Optional. This is for setting the window title as Doom sets this from WAD file.||
+|`void Exit(int exit_code)`|Called when Doom exits.|The game doesn't actually "exit" (call `exit()`) since that would kill the host process.|
+|`void Log(char* message)`|Optional.||
 
-|Functions            |Description|
-|---------------------|-----------|
-|DG_Init              |Initialize your platfrom (create window, framebuffer, etc...).
-|DG_DrawFrame         |Frame is ready in DG_ScreenBuffer. Copy it to your platform's screen.
-|DG_SleepMs           |Sleep in milliseconds.
-|DG_GetTicksMs        |The ticks passed since launch in milliseconds.
-|DG_GetKey            |Provide keyboard events.
-|DG_SetWindowTitle    |Not required. This is for setting the window title as Doom sets this from WAD file.
+Then, put those callbacks (in the same order as listed above) into an object, send it to the dll, and start the game.
 
-### main loop
-At start, call doomgeneric_Create().
+## How do I run it in my host application?
+First, call [`SetCallbacks`](https://github.com/Govorunb/doomgeneric/blob/b3336ce013865e9f1318ebb454b84a397784bdf4/doomgeneric/doomgeneric_interop.h#L34) with your callbacks object. If your host is managed, you will need to marshal that object into a struct pointer and pin all function pointers to prevent them getting moved/cleaned up by the garbage collector.
 
-In a loop, call doomgeneric_Tick().
+When you want to start the game, call `Create`.
 
-In simplest form:
-```
-int main(int argc, char **argv)
-{
-    doomgeneric_Create(argc, argv);
+In a loop, call `Tick`.
 
-    while (1)
-    {
-        doomgeneric_Tick();
-    }
-    
-    return 0;
-}
-```
+## Sound?
+Define [`FEATURE_SOUND`](https://github.com/Govorunb/doomgeneric/blob/b3336ce013865e9f1318ebb454b84a397784bdf4/doomgeneric/doomfeatures.h#L36), and call [`SetAudioCallbacks`](https://github.com/Govorunb/doomgeneric/blob/b3336ce013865e9f1318ebb454b84a397784bdf4/doomgeneric/doomgeneric_interop_audio.h#L54) with your sound/music callbacks before `Create`.
 
-# sound
-Sound is much harder to implement! If you need sound, take a look at SDL port. It fully supports sound and music! Where to start? Define FEATURE_SOUND, assign DG_sound_module and DG_music_module.
+Sound effect data sent to callbacks is in mono 16-bit signed PCM (expanded from [8-bit **unsigned** PCM](https://doomwiki.org/wiki/Sound)). Note that padding is preserved. Most sound effects are in 11025hz.
 
-# platforms
-Ported platforms include Windows, X11, SDL, emscripten. Just look at (doomgeneric_win.c, doomgeneric_xlib.c, doomgeneric_sdl.c).
-Makefiles provided for each platform.
+Music is sent to callbacks as MIDI (converted internally from [MUS](https://doomwiki.org/wiki/MUS)).
 
-## emscripten
-You can try it directly here:
-https://ozkl.github.io/doomgeneric/
+## Other features? (jumping, rebinding controls, modern rendering, etc.)
+This is a very limited-scope project for me (I just wanted to get Doom running inside a Unity mod) but if you get it working let me know! I love to see the concept of "doom on everything" thrive.
 
-emscripten port is based on SDL port, so it supports sound and music! For music, timidity backend is used.
+# Platforms
+This fork has only been tested on Windows.
 
-## Windows
-![Windows](screenshots/windows.png)
-
-## X11 - Ubuntu
-![Ubuntu](screenshots/ubuntu.png)
-
-## X11 - FreeBSD
-![FreeBSD](screenshots/freebsd.png)
-
-## SDL
-![SDL](screenshots/sdl.png)
