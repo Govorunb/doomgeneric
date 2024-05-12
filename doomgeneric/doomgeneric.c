@@ -2,6 +2,7 @@
 #include "m_argv.h"
 #include "doomgeneric.h"
 #include "m_misc.h"
+#include "d_iwad.h"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -30,6 +31,16 @@ void doomgeneric_Create(int argc, char **argv)
 	DG_Init();
 
 	D_DoomMain ();
+}
+
+void doomgeneric_AddIWADPath(char* dir)
+{
+	D_AddIWADDir(dir);
+}
+
+void doomgeneric_SetFallbackIWADPath(char* dir)
+{
+	D_SetFallbackIWADDir(dir);
 }
 
 void Log(const char* format, ...)

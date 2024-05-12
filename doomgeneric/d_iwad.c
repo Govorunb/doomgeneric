@@ -61,6 +61,8 @@ static boolean iwad_dirs_built = false;
 static char *iwad_dirs[MAX_IWAD_DIRS];
 static int num_iwad_dirs = 0;
 
+static char* fallback_iwad_dir;
+
 static void AddIWADDir(char *dir)
 {
     if (num_iwad_dirs < MAX_IWAD_DIRS)
@@ -68,6 +70,21 @@ static void AddIWADDir(char *dir)
         iwad_dirs[num_iwad_dirs] = dir;
         ++num_iwad_dirs;
     }
+}
+
+static void SetFallbackIWADDir(const char* dir)
+{
+    fallback_iwad_dir = strdup(dir);
+}
+
+void D_AddIWADDir(char* dir)
+{
+    AddIWADDir(dir);
+}
+
+void D_SetFallbackIWADDir(char* dir)
+{
+	SetFallbackIWADDir(dir);
 }
 
 // This is Windows-specific code that automatically finds the location
@@ -606,7 +623,6 @@ static void AddDoomWadPath(void)
 
 static void BuildIWADDirList(void)
 {
-#if 1
     char *doomwaddir;
 
     if (iwad_dirs_built)
@@ -652,13 +668,10 @@ static void BuildIWADDirList(void)
     AddIWADDir("/usr/local/share/games/doom");
 
 #endif
-#else
-    AddIWADDir (FILES_DIR);
 
     // Don't run this function again.
 
     iwad_dirs_built = true;
-#endif
 }
 
 //
@@ -683,30 +696,13 @@ char *D_FindWADByName(char *name)
 
     for (i=0; i<num_iwad_dirs; ++i)
     {
-        // As a special case, if this is in DOOMWADDIR or DOOMWADPATH,
-        // the "directory" may actually refer directly to an IWAD
-        // file.
-
-        if (DirIsFile(iwad_dirs[i], name) && M_FileExists(iwad_dirs[i]))
-        {
-            return strdup(iwad_dirs[i]);
-        }
-
-        // Construct a string for the full path
-
-        path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, name, NULL);
-
-        if (M_FileExists(path))
-        {
-            return path;
-        }
-
-        free(path);
+        path = CheckDirectoryHasIWAD(iwad_dirs[i], name);
+        if (path) return path;
     }
+    
+    // Check the fallback dir
 
-    // File not found
-
-    return NULL;
+    return CheckDirectoryHasIWAD(fallback_iwad_dir, name);
 }
 
 //
@@ -784,6 +780,10 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
         for (i=0; result == NULL && i<num_iwad_dirs; ++i)
         {
             result = SearchDirectoryForIWAD(iwad_dirs[i], mask, mission);
+        }
+        if (result == NULL)
+        {
+            result = SearchDirectoryForIWAD(fallback_iwad_dir, mask, mission);
         }
     }
 

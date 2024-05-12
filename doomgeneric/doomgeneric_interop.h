@@ -33,4 +33,6 @@ static dg_callbacks_t* Callbacks;
 
 __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks);
 __declspec(dllexport) DG_ERROR Create(int argc, char** argv);
+__declspec(dllexport) void AddIWADPath(char* dir);
+__declspec(dllexport) void SetFallbackIWADPath(char* dir);
 __declspec(dllexport) void Tick();

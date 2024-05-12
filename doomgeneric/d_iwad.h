@@ -39,6 +39,8 @@ typedef struct
     char *description;
 } iwad_t;
 
+void D_AddIWADDir(char* dir);
+void D_SetFallbackIWADDir(char* dir);
 char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
 char *D_FindIWAD(int mask, GameMission_t *mission);

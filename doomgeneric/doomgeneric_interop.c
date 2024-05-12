@@ -90,6 +90,15 @@ __declspec(dllexport) int Create(int argc, char** argv)
 	return DG_SUCCESS;
 }
 
+__declspec(dllexport) void AddIWADPath(const char* path)
+{
+	doomgeneric_AddIWADPath(strdup(path));
+}
+__declspec(dllexport) void SetFallbackIWADPath(const char* path)
+{
+	doomgeneric_SetFallbackIWADPath(strdup(path));
+}
+
 __declspec(dllexport) void Tick()
 {
 	doomgeneric_Tick();

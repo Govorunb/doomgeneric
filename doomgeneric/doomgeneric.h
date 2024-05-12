@@ -12,6 +12,8 @@
 extern uint32_t* DG_ScreenBuffer;
 
 void doomgeneric_Create(int argc, char **argv);
+void doomgeneric_AddIWADPath(char* dir);
+void doomgeneric_SetFallbackIWADPath(char* dir);
 void doomgeneric_Tick();
 
 
