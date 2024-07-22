@@ -6,3 +6,6 @@
 .vs/
 Debug/
 Release/
+.idea
+obj/
+bin/

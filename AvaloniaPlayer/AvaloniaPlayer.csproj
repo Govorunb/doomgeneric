@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.22000.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.1.0-rc1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.0-rc1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.0-rc1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0-rc1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.0-rc1" />
+    <!--Use Avalonia.Diagnostics only in Debug configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0-rc1" />
+    <PackageReference Include="Melanchall.DryWetMidi" Version="7.1.0" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
+    <PackageReference Include="NAudio.Extras" Version="2.2.1" />
+    <PackageReference Include="NAudio.Midi" Version="2.2.1" />
+    <PackageReference Include="NAudio.WinForms" Version="2.2.1" />
+    <PackageReference Include="ReactiveUI" Version="20.1.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
+  </ItemGroup>
+  
+  <Target Name="CopyBinaries" BeforeTargets="BeforeBuild">
+    <CreateItem Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*">
+      <Output TaskParameter="Include" ItemName="DoomBinary" />
+    </CreateItem>
+    <Copy SourceFiles="@(DoomBinary)"
+          DestinationFolder="$(OutputPath)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>
