@@ -1,6 +1,8 @@
-## Avalonia player for doomgeneric
+## [Avalonia](https://avaloniaui.net) player for doomgeneric
+A relatively minimal example implementation of a managed host running doomgeneric through callbacks.
 
-A fairly basic example implementation of a managed host running doomgeneric through callbacks.
+#### Building
+Make sure to build the [native project](../doomgeneric/doomgeneric.vcxproj) first. Building this project will [automatically](./AvaloniaPlayer.csproj#L30) copy the native assembly to the output folder.
 
 ### Graphics
 The native draw buffer is wrapped into a [SkiaSharp](https://github.com/mono/SkiaSharp) bitmap and then rendered to the screen by Avalonia through a [custom draw operation](./Doom/Screen/BitmapHelper.cs#L17).
