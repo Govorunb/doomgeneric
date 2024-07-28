@@ -69,9 +69,9 @@
 #include "r_sky.h"
 
 
-
 #include "g_game.h"
 
+#include "doomgeneric_events.h"
 
 #define SAVEGAMESIZE	0x2c000
 
@@ -1356,6 +1356,7 @@ void G_DoCompleted (void)
     if (automapactive) 
 	AM_Stop (); 
 	
+    DG_OnLevelComplete(gameepisode, gamemap);
     if (gamemode != commercial)
     {
         // Chex Quest ends after 5 levels, rather than 8.

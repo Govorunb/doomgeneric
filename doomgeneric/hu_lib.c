@@ -27,6 +27,7 @@
 #include "hu_lib.h"
 #include "r_local.h"
 #include "r_draw.h"
+#include "doomgeneric_interop_events.h"
 
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
@@ -218,6 +219,7 @@ HUlib_addMessageToSText
 
     while (*msg)
 	HUlib_addCharToTextLine(&s->l[s->cl], *(msg++));
+    DG_OnGameMessage(s->l[s->cl].l);
 }
 
 void HUlib_drawSText(hu_stext_t* s)

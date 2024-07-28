@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace AvaloniaPlayer.Doom;
 
-internal static partial class DoomAudioNative
+internal static partial class DoomNativeAudio
 {
     public abstract class SoundModule
     {

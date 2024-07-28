@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AvaloniaPlayer": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

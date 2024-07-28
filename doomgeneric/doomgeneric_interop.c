@@ -3,62 +3,63 @@
 #include "doomgeneric_interop.h"
 #include <string.h>
 
+#define INVOKE_CALLBACK(func, ...) INVOKE(Callbacks, func, __VA_ARGS__)
+#define INVOKE_CALLBACK_RETURNS(func, def_val, ...) (Callbacks && Callbacks->func ? Callbacks->func(__VA_ARGS__) : def_val)
+
 void DG_Init()
 {
-	if (!Callbacks || !Callbacks->Init) return;
-	Callbacks->Init(DOOMGENERIC_RESX, DOOMGENERIC_RESY);
+	INVOKE_CALLBACK(Init, DOOMGENERIC_RESX, DOOMGENERIC_RESY);
 }
 
 void DG_DrawFrame()
 {
-	if (!Callbacks || !Callbacks->DrawFrame) return;
-	Callbacks->DrawFrame((unsigned char *)DG_ScreenBuffer, SCREENBUFFER_SIZE);
+	INVOKE_CALLBACK(DrawFrame, (unsigned char*)DG_ScreenBuffer, SCREENBUFFER_SIZE);
 }
 
 void DG_SleepMs(uint32_t ms)
 {
-	if (!Callbacks || !Callbacks->Sleep) return;
-	Callbacks->Sleep(ms);
+	INVOKE_CALLBACK(Sleep, ms);
 }
 
 uint32_t DG_GetTicksMs()
 {
-	if (!Callbacks || !Callbacks->GetTicksMs) return 0;
-	return Callbacks->GetTicksMs();
+	return INVOKE_CALLBACK_RETURNS(GetTicksMs, 0);
 }
 
 int DG_GetKey(int* pressed, unsigned char* doomKey)
 {
-	if (!Callbacks || !Callbacks->GetKey) return 0;
-	return Callbacks->GetKey(pressed, doomKey);
+	return INVOKE_CALLBACK_RETURNS(GetKey, 0, (boolean*)pressed, doomKey);
 }
 
 void DG_GetMouse(int* deltax, int* deltay, int* left, int* right, int* middle, int* mwheel)
 {
-	if (!Callbacks || !Callbacks->GetMouse) return;
-	Callbacks->GetMouse(deltax, deltay, left, right, middle, mwheel);
+	INVOKE_CALLBACK(GetMouse, deltax, deltay, (boolean*)left, (boolean*)right, (boolean*)middle, mwheel);
 }
 
 void DG_SetWindowTitle(const char* title)
 {
-	if (!Callbacks || !Callbacks->SetWindowTitle) return;
-	Callbacks->SetWindowTitle(title);
+	INVOKE_CALLBACK(SetWindowTitle, title);
 }
 
 void DG_Exit(int exit_code)
 {
-	if (!Callbacks || !Callbacks->Exit) return;
-	Callbacks->Exit(exit_code);
+	INVOKE_CALLBACK(Exit, exit_code);
 }
 
 void DG_Log(const char* message)
 {
-	if (!Callbacks || !Callbacks->Log) return;
-	Callbacks->Log(message);
+	INVOKE_CALLBACK(Log, message);
 }
 
 __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks)
 {
+	boolean overwrote = false;
+	if (Callbacks) {
+		overwrote = true;
+		DG_Log("Overwriting existing callbacks");
+		// notify the new logger as well (though it's debatable whether it should care)
+		INVOKE(callbacks, Log, "Overwrote existing callbacks");
+	}
 	Callbacks = callbacks;
 }
 

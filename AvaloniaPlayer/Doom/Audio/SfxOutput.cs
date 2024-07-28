@@ -9,7 +9,7 @@ internal static class SfxOutput
     private static readonly MixingSampleProvider _mixer = new(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
     private static readonly SfxChannel[] _channels = new SfxChannel[32];
 
-    internal static DoomAudioNative.SoundModule.Callbacks GetCallbacks()
+    internal static DoomNativeAudio.SoundModule.Callbacks GetCallbacks()
     {
         return new()
         {
@@ -52,7 +52,7 @@ internal static class SfxOutput
 
     private static nint Start(IntPtr sfxinfo, int channel, int vol, int sep)
     {
-        DoomAudioNative.SoundModule.SfxInfo sfxInfo = Marshal.PtrToStructure<DoomAudioNative.SoundModule.SfxInfo>(sfxinfo);
+        DoomNativeAudio.SoundModule.SfxInfo sfxInfo = Marshal.PtrToStructure<DoomNativeAudio.SoundModule.SfxInfo>(sfxinfo);
         var player = _channels[channel];
         player.SetSfx(sfxInfo);
         UpdateSoundParams(channel, vol, sep);

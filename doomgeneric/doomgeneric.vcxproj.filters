@@ -273,6 +273,9 @@
     <ClCompile Include="mus2mid.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="doomgeneric_interop_events.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="am_map.h">
@@ -570,6 +573,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="doomgeneric_interop_audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="doomgeneric_interop_events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="doomgeneric_events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

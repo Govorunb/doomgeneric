@@ -42,7 +42,7 @@
 
 #define BONUSADD	6
 
-
+#include "doomgeneric_events.h"
 
 
 // a weapon is found with two clip loads,
@@ -714,6 +714,8 @@ P_KillMobj
 	
     }
 
+	DG_OnKill(target, source);
+
     if (target->health < -target->info->spawnhealth 
 	&& target->info->xdeathstate)
     {
@@ -783,7 +785,7 @@ P_DamageMobj
   int 		damage )
 {
     unsigned	ang;
-    int		saved;
+    int		saved = 0;
     player_t*	player;
     fixed_t	thrust;
     int		temp;
@@ -877,6 +879,7 @@ P_DamageMobj
 	
 	player->attacker = source;
 	player->damagecount += damage;	// add damage after armor / invuln
+	DG_OnPlayerTookDamage(player, source, damage, saved);
 
 	if (player->damagecount > 100)
 	    player->damagecount = 100;	// teleport stomp does 10k points...

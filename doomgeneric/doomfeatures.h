@@ -35,6 +35,10 @@
 
 #define FEATURE_SOUND
 
+// Provide callbacks on certain in-game events
+
+#define FEATURE_EVENTS
+
 #endif /* #ifndef DOOM_FEATURES_H */
 
 

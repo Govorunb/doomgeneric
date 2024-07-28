@@ -12,7 +12,7 @@ internal static class MusicOutput
 
     public static int Pos { get; set; }
 
-    internal static DoomAudioNative.MusicModule.Callbacks GetCallbacks()
+    internal static DoomNativeAudio.MusicModule.Callbacks GetCallbacks()
     {
         return new()
         {

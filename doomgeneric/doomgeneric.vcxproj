@@ -154,6 +154,7 @@
     <ClCompile Include="am_map.c" />
     <ClCompile Include="doomdef.c" />
     <ClCompile Include="doomgeneric.c" />
+    <ClCompile Include="doomgeneric_interop_events.c" />
     <ClCompile Include="doomgeneric_interop.c" />
     <ClCompile Include="doomgeneric_audio.c" />
     <ClCompile Include="doomgeneric_interop_audio.c" />
@@ -249,9 +250,11 @@
     <ClInclude Include="doomdef.h" />
     <ClInclude Include="doomfeatures.h" />
     <ClInclude Include="doomgeneric.h" />
+    <ClInclude Include="doomgeneric_events.h" />
     <ClInclude Include="doomgeneric_interop.h" />
     <ClInclude Include="doomgeneric_audio.h" />
     <ClInclude Include="doomgeneric_interop_audio.h" />
+    <ClInclude Include="doomgeneric_interop_events.h" />
     <ClInclude Include="doomkeys.h" />
     <ClInclude Include="doomstat.h" />
     <ClInclude Include="doomtype.h" />

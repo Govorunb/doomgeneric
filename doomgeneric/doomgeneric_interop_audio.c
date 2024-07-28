@@ -1,103 +1,94 @@
 #include "doomgeneric_interop_audio.h"
 
+#define INVOKE_SND(func, ...) if (Snd_Callbacks && Snd_Callbacks->func) Snd_Callbacks->func(__VA_ARGS__)
+#define INVOKE_SND_RETURNS(func, def_val, ...) (Snd_Callbacks && Snd_Callbacks->func ? Snd_Callbacks->func(__VA_ARGS__) : def_val)
+#define INVOKE_MUS(func, ...) if (Mus_Callbacks && Mus_Callbacks->func) Mus_Callbacks->func(__VA_ARGS__)
+#define INVOKE_MUS_RETURNS(func, def_val, ...) (Mus_Callbacks && Mus_Callbacks->func ? Mus_Callbacks->func(__VA_ARGS__) : def_val)
 
 boolean DG_Snd_Init() {
-	if (!Snd_Callbacks || !Snd_Callbacks->Init) return false;
-	return Snd_Callbacks->Init();
+	return INVOKE_SND_RETURNS(Init, false);
 }
 
 void DG_Snd_Shutdown() {
-	if (!Snd_Callbacks || !Snd_Callbacks->Shutdown) return;
-	Snd_Callbacks->Shutdown();
+	INVOKE_SND(Shutdown);
 }
 
 void DG_Snd_Update() {
-	if (!Snd_Callbacks || !Snd_Callbacks->Update) return;
-	Snd_Callbacks->Update();
+	INVOKE_SND(Update);
 }
 
 void DG_Snd_UpdateSoundParams(CHANNEL channel, int vol, int sep) {
-	if (!Snd_Callbacks || !Snd_Callbacks->UpdateSoundParams) return;
-	Snd_Callbacks->UpdateSoundParams(channel, vol, sep);
+	INVOKE_SND(UpdateSoundParams, channel, vol, sep);
 }
 
 CHANNEL DG_Snd_StartSound(sfxdata_t* sound, int channel, int vol, int sep) {
-	if (!Snd_Callbacks || !Snd_Callbacks->StartSound) return -1;
-	return Snd_Callbacks->StartSound(sound, channel, vol, sep);
+	return INVOKE_SND_RETURNS(StartSound, -1, sound, channel, vol, sep);
 }
 
 void DG_Snd_StopSound(CHANNEL channel) {
-	if (!Snd_Callbacks || !Snd_Callbacks->StopSound) return;
-	Snd_Callbacks->StopSound(channel);
+	INVOKE_SND(StopSound, channel);
 }
 
 boolean DG_Snd_IsPlaying(CHANNEL channel) {
-	if (!Snd_Callbacks || !Snd_Callbacks->IsPlaying) return false;
-	return Snd_Callbacks->IsPlaying(channel);
+	return INVOKE_SND_RETURNS(IsPlaying, false, channel);
 }
 
 void DG_Snd_CacheSounds(sfxdata_t* sounds, int num_sounds) {
-	if (!Snd_Callbacks || !Snd_Callbacks->CacheSounds) return;
-	Snd_Callbacks->CacheSounds(sounds, num_sounds);
+	INVOKE_SND(CacheSounds, sounds, num_sounds);
 }
 
 
 boolean DG_Mus_Init() {
-	if (!Mus_Callbacks || !Mus_Callbacks->Init) return false;
-	return Mus_Callbacks->Init();
+	return INVOKE_MUS_RETURNS(Init, false);
 }
 
 void DG_Mus_Shutdown() {
-	if (!Mus_Callbacks || !Mus_Callbacks->Shutdown) return;
-	Mus_Callbacks->Shutdown();
+	INVOKE_MUS(Shutdown);
 }
 
 void DG_Mus_SetVolume(int volume) {
-	if (!Mus_Callbacks || !Mus_Callbacks->SetVolume) return;
-	Mus_Callbacks->SetVolume(volume);
+	INVOKE_MUS(SetVolume, volume);
 }
 
 void DG_Mus_Pause() {
-	if (!Mus_Callbacks || !Mus_Callbacks->Pause) return;
-	Mus_Callbacks->Pause();
+	INVOKE_MUS(Pause);
 }
 
 void DG_Mus_Resume() {
-	if (!Mus_Callbacks || !Mus_Callbacks->Resume) return;
-	Mus_Callbacks->Resume();
+	INVOKE_MUS(Resume);
 }
 
 MUS_HANDLE DG_Mus_RegisterSong(void* data, int len) {
-	if (!Mus_Callbacks || !Mus_Callbacks->RegisterSong) return NULL;
-	return Mus_Callbacks->RegisterSong(data, len);
+	return INVOKE_MUS_RETURNS(RegisterSong, NULL, data, len);
 }
 
 void DG_Mus_UnRegisterSong(MUS_HANDLE handle) {
-	if (!Mus_Callbacks || !Mus_Callbacks->UnRegisterSong) return;
-	Mus_Callbacks->UnRegisterSong(handle);
+	INVOKE_MUS(UnRegisterSong, handle);
 }
 
 void DG_Mus_PlaySong(MUS_HANDLE handle, boolean looping) {
-	if (!Mus_Callbacks || !Mus_Callbacks->PlaySong) return;
-	Mus_Callbacks->PlaySong(handle, looping);
+	INVOKE_MUS(PlaySong, handle, looping);
 }
 
 void DG_Mus_StopSong() {
-	if (!Mus_Callbacks || !Mus_Callbacks->StopSong) return;
-	Mus_Callbacks->StopSong();
+	INVOKE_MUS(StopSong);
 }
 
 boolean DG_Mus_IsPlaying() {
-	if (!Mus_Callbacks || !Mus_Callbacks->IsPlaying) return false;
-	return Mus_Callbacks->IsPlaying();
+	return INVOKE_MUS_RETURNS(IsPlaying, false);
 }
 
 void DG_Mus_Poll() {
-	if (!Mus_Callbacks || !Mus_Callbacks->Poll) return;
-	Mus_Callbacks->Poll();
+	INVOKE_MUS(Poll);
 }
 
 __declspec(dllexport) void SetAudioCallbacks(dg_snd_callbacks_t* snd_callbacks, dg_mus_callbacks_t* mus_callbacks) {
+	if (snd_callbacks) {
+		DG_Log("Overwriting existing snd_callbacks");
+	}
 	Snd_Callbacks = snd_callbacks;
+	if (mus_callbacks) {
+		DG_Log("Overwriting existing mus_callbacks");
+	}
 	Mus_Callbacks = mus_callbacks;
 }

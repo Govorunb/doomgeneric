@@ -32,7 +32,16 @@ partial class DoomEngine
         }
         _gameClock.Start();
         Stopwatch sw = Stopwatch.StartNew();
-        DoomAudioNative.SetAudioCallbacks(SfxOutput.GetCallbacks(), MusicOutput.GetCallbacks());
+        // TODO: abstract these function pointers away
+        DoomNativeEvents.SetEventCallbacks(new()
+        {
+            OnSecretDiscovered = (_) => LogWarning("Discovered a secret!"),
+            // OnKill = (_, _) => LogWarning("Map thing died"),
+            OnPlayerTookDamage = (_, _, dmgHealth, dmgArmor) => LogInfo($"Player took {dmgHealth+dmgArmor} damage ({dmgHealth}HP, {dmgArmor}AP)"),
+            OnLevelComplete = (ep, map) => LogWarning($"E{ep}M{map} complete"),
+            OnGameMessage = (msg) => LogWarning($"(Game) {msg}"),
+        });
+        DoomNativeAudio.SetAudioCallbacks(SfxOutput.GetCallbacks(), MusicOutput.GetCallbacks());
         AudioOutput.Init();
         DoomNative.Start(new()
         {

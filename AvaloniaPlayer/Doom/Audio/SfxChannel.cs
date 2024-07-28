@@ -19,7 +19,7 @@ internal class SfxChannel : ISampleProvider
     public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     public bool IsPlaying { get; private set; }
 
-    public void SetSfx(DoomAudioNative.SoundModule.SfxInfo sfxInfo)
+    public void SetSfx(DoomNativeAudio.SoundModule.SfxInfo sfxInfo)
     {
         unsafe
         {

@@ -24,11 +24,11 @@ internal static partial class DoomNative
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void GetMouseCallback(out int deltax, out int deltay, out bool left, out bool right, out bool middle, out int wheel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void SetWindowTitleCallback([MarshalAs(UnmanagedType.LPStr)] string title);
+    public delegate void SetWindowTitleCallback(string title);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void Exit(int exitCode);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void Log([In, MarshalAs(UnmanagedType.LPStr)] string message);
+    public delegate void Log(string message);
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Callbacks
@@ -128,7 +128,6 @@ internal static partial class DoomNative
         };
     }
 
-    // our interface
     [LibraryImport(DLL_NAME, EntryPoint = "SetCallbacks")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void NativeSetCallbacks(IntPtr callbacks);

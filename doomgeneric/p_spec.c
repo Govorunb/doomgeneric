@@ -47,6 +47,7 @@
 // Data.
 #include "sounds.h"
 
+#include "doomgeneric_events.h"
 
 //
 // Animating textures and planes
@@ -1058,6 +1059,7 @@ void P_PlayerInSpecialSector (player_t* player)
       case 9:
 	// SECRET SECTOR
 	player->secretcount++;
+	DG_OnSecretDiscovered(sector);
 	sector->special = 0;
 	break;
 			

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define INVOKE(callbacks, func, ...) if (callbacks && callbacks->func) callbacks->func(__VA_ARGS__)
+
 typedef void(*InitCallback)(int resX, int resY);
 typedef void(*DrawFrameCallback)(unsigned char* screen_buffer, int buffer_bytes);
 typedef void(*SleepCallback)(uint32_t millis);
@@ -33,6 +35,6 @@ static dg_callbacks_t* Callbacks;
 
 __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks);
 __declspec(dllexport) DG_ERROR Create(int argc, char** argv);
-__declspec(dllexport) void AddIWADPath(char* dir);
-__declspec(dllexport) void SetFallbackIWADPath(char* dir);
+__declspec(dllexport) void AddIWADPath(const char* dir);
+__declspec(dllexport) void SetFallbackIWADPath(const char* dir);
 __declspec(dllexport) void Tick();

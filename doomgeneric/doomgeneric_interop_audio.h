@@ -1,4 +1,7 @@
 #include "doomgeneric_audio.h"
+#include "doomgeneric_interop.h"
+
+#ifdef FEATURE_SOUND
 
 typedef boolean (*SndInitCallback)();
 typedef void (*SndShutdownCallback)();
@@ -52,3 +55,5 @@ static dg_snd_callbacks_t* Snd_Callbacks;
 static dg_mus_callbacks_t* Mus_Callbacks;
 
 __declspec(dllexport) void SetAudioCallbacks(dg_snd_callbacks_t* callbacks, dg_mus_callbacks_t* mus_callbacks);
+
+#endif
