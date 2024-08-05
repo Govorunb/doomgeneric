@@ -2,13 +2,17 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvaloniaPlayer.Doom.Audio;
+using AvaloniaPlayer.Doom.Input;
+using InteropDoom;
+using InteropDoom.Input;
 using WinCursor = System.Windows.Forms.Cursor;
 
 namespace AvaloniaPlayer.Doom.Screen;
 
 public class DoomScreen : UserControl
 {
-    public IImage Screen { get; } = DoomEngine.Screen.ToAvalonia();
+    public IImage Screen { get; private set; } = null!;
 
     public DoomScreen()
     {
@@ -18,14 +22,24 @@ public class DoomScreen : UserControl
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        DoomEngine.Initialize();
-        DoomEngine.OnDrawFrame += Repaint;
+        DoomRuntime.Initialize();
+        var engine = App.DoomEngine;
+        engine.Init += OnDoomInit;
+        engine.DrawFrame += Repaint;
         base.OnAttachedToVisualTree(e);
+    }
+
+    private void OnDoomInit(ScreenBuffer screen)
+    {
+        Debug.Assert(screen is { IsInitialized: true });
+        Screen = screen.ToAvalonia();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        DoomEngine.OnDrawFrame -= Repaint;
+        var engine = App.DoomEngine;
+        engine.Init -= OnDoomInit;
+        engine.DrawFrame -= Repaint;
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -51,12 +65,12 @@ public class DoomScreen : UserControl
     {
         var screenCenter = App.Current.MainWindow.Position + new PixelPoint((int)Bounds.Center.X, (int)Bounds.Center.Y);
         WinCursor.Position = new(screenCenter.X, screenCenter.Y);
-        _ignoreNextMove = true;
+        _ignoreNextMove++;
     }
 
     private Point _lastPos;
-    private double _mouseSensitivity = 1.5;
-    private bool _ignoreNextMove;
+    private double _mouseSensitivity = 2.5;
+    private int _ignoreNextMove;
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
@@ -64,12 +78,15 @@ public class DoomScreen : UserControl
         Point delta = (pos - _lastPos) * _mouseSensitivity;
         _lastPos = pos;
 
-        bool ignored = _ignoreNextMove;
-        _ignoreNextMove = false;
-        if (!App.Current.MainWindow.IsActive || !IsFocused || ignored)
+        if (!App.Current.MainWindow.IsActive || !IsFocused)
             return;
+        if (_ignoreNextMove > 0)
+        {
+            _ignoreNextMove = 0;
+            return;
+        }
 
-        DoomEngine.OnMouseMove(delta);
+        DoomRuntime.OnMouseMove(delta.X, delta.Y);
         RecenterMouse();
     }
 
@@ -88,29 +105,40 @@ public class DoomScreen : UserControl
     private static void UpdateMouseButtons(PointerEventArgs e)
     {
         var p = e.GetCurrentPoint(null).Properties;
-        DoomEngine.UpdateMouseButtons(p.IsLeftButtonPressed, p.IsRightButtonPressed, p.IsMiddleButtonPressed);
+        DoomRuntime.UpdateMouseButtons(GetMouseButtons(p));
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-        DoomEngine.OnKeyEvent(true, e.PhysicalKey);
+        DoomRuntime.OnKeyEvent(true, e.PhysicalKey.ToDoomKey());
     }
 
     protected override void OnKeyUp(KeyEventArgs e)
     {
         base.OnKeyUp(e);
-        DoomEngine.OnKeyEvent(false, e.PhysicalKey);
+        DoomRuntime.OnKeyEvent(false, e.PhysicalKey.ToDoomKey());
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        DoomEngine.OnScroll(e.Delta.Y);
+        DoomRuntime.OnMouseScroll(e.Delta.Y);
     }
 
     private void Repaint()
     {
         UIThread.Post(InvalidateVisual);
+    }
+
+    private static MouseButtons GetMouseButtons(PointerPointProperties p)
+    {
+        MouseButtons buttons = default;
+        if (p.IsLeftButtonPressed) buttons |= MouseButtons.Left;
+        if (p.IsRightButtonPressed) buttons |= MouseButtons.Right;
+        if (p.IsMiddleButtonPressed) buttons |= MouseButtons.Middle;
+        if (p.IsXButton1Pressed) buttons |= MouseButtons.SideBack;
+        if (p.IsXButton2Pressed) buttons |= MouseButtons.SideFront;
+        return buttons;
     }
 }

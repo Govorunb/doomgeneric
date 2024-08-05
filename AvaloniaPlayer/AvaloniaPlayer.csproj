@@ -8,9 +8,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>true</UseWindowsForms>
     <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InteropDoom\InteropDoom.csproj" />
     <PackageReference Include="Avalonia" Version="11.1.0-rc1" />
     <PackageReference Include="Avalonia.Desktop" Version="11.1.0-rc1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.0-rc1" />
@@ -25,14 +28,13 @@
     <PackageReference Include="NAudio.WinForms" Version="2.2.1" />
     <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
+    <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
-  
-  <Target Name="CopyBinaries" BeforeTargets="BeforeBuild">
-    <CreateItem Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*">
-      <Output TaskParameter="Include" ItemName="DoomBinary" />
-    </CreateItem>
-    <Copy SourceFiles="@(DoomBinary)"
-          DestinationFolder="$(OutputPath)"
-          SkipUnchangedFiles="true" />
-  </Target>
+
+  <ItemGroup>
+    <Publicize Include="Melanchall.DryWetMidi" />
+  </ItemGroup>
 </Project>

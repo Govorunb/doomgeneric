@@ -7,9 +7,13 @@ internal static class AudioOutput
 {
     private static readonly WasapiOut _out = new(AudioClientShareMode.Shared, 50);
     private static readonly MixingSampleProvider _mixer = new(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
+    private static bool _isInitialized;
 
     public static void Init()
     {
+        if (_isInitialized) return;
+        
+        _isInitialized = true;
         _mixer.ReadFully = true;
         _out.Init(_mixer);
         _out.Play();

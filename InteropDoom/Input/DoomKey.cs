@@ -1,7 +1,7 @@
-namespace AvaloniaPlayer.Doom.Input;
+namespace InteropDoom.Input;
 
 // doomkey.h
-internal enum DoomKey : byte
+public enum DoomKey : byte
 {
     RightArrow = 0xae,
     LeftArrow = 0xac,

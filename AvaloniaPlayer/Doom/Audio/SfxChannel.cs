@@ -4,7 +4,6 @@ using NAudio.Wave.SampleProviders;
 namespace AvaloniaPlayer.Doom.Audio;
 internal class SfxChannel : ISampleProvider
 {
-    private UnmanagedMemoryStream _stream = null!;
     private RawSourceWaveStream _waveStream = null!;
     private ISampleProvider _samples = null!;
     private VolumeSampleProvider _volume = null!;
@@ -19,15 +18,10 @@ internal class SfxChannel : ISampleProvider
     public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     public bool IsPlaying { get; private set; }
 
-    public void SetSfx(DoomNativeAudio.SoundModule.SfxInfo sfxInfo)
+    public void SetSfx(SfxInfo sfxInfo)
     {
-        unsafe
-        {
-            byte* ptr = (byte*)sfxInfo.Data + 16 * sizeof(short); // first and last 16 bytes are padding (both get expanded to 32)
-            uint bytesLength = sfxInfo.NumSamples * 2;
-            _stream = new UnmanagedMemoryStream(ptr, bytesLength);
-        }
-        _waveStream = new(_stream, new(sfxInfo.SampleRate, 1));
+        var stream = sfxInfo.ToStream();
+        _waveStream = new(stream, new(sfxInfo.SampleRate, 1));
         _samples = new WaveFormatConversionProvider(new(44100, 1), _waveStream).ToSampleProvider();
         _volume = new(_samples);
         _stereo = new(_volume);
@@ -36,7 +30,8 @@ internal class SfxChannel : ISampleProvider
 
     public int Read(float[] buffer, int offset, int sampleCount)
     {
-        if (!IsPlaying || _out is null) return 0;
+        if (!IsPlaying || _out is null)
+            return 0; // "no more bytes to read"; returning sampleCount without filling the buffer means "silence"
 
         return _out.Read(buffer, offset, sampleCount);
     }

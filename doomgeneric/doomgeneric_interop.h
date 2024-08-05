@@ -3,8 +3,8 @@
 
 #define INVOKE(callbacks, func, ...) if (callbacks && callbacks->func) callbacks->func(__VA_ARGS__)
 
-typedef void(*InitCallback)(int resX, int resY);
-typedef void(*DrawFrameCallback)(unsigned char* screen_buffer, int buffer_bytes);
+typedef void(*InitCallback)(uint32_t* screen_buffer, int resX, int resY);
+typedef void(*DrawFrameCallback)();
 typedef void(*SleepCallback)(uint32_t millis);
 typedef uint32_t(*GetTicksMillisCallback)();
 typedef boolean(*GetKeyCallback)(boolean* pressed, unsigned char* doomKey);

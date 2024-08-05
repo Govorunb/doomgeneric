@@ -1,4 +1,5 @@
 using Avalonia.Input;
+using InteropDoom.Input;
 
 namespace AvaloniaPlayer.Doom.Input;
 
@@ -102,13 +103,9 @@ internal static class KeyCodeConverter
         if (_physToDoom.TryGetValue(physKey, out DoomKey doomKey))
             return doomKey;
 
-        string? name = physKey.ToQwertyKeySymbol();
-        if (name?.Length == 1)
-        {
-            // letter key
-            return (DoomKey)char.ToLower(name[0]);
-        }
-        return default;
+        return physKey.ToQwertyKeySymbol() is [char letterKey]
+            ? (DoomKey)char.ToLower(letterKey)
+            : default;
     }
 
     public static IEnumerable<(PhysicalKey, DoomKey)> GetAllKeys() => _physToDoom.Select(pair => (pair.Key, pair.Value));

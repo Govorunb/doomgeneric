@@ -4,88 +4,62 @@ using MidiFile = Melanchall.DryWetMidi.Core.MidiFile;
 
 namespace AvaloniaPlayer.Doom.Audio;
 
-internal static class MusicOutput
+internal class MusicOutput : IMusicEngine
 {
-    private static NAudioOutputDevice _midiOut = null!;
-    private static MidiFile? _songData;
-    private static Playback? _song;
+    private NAudioOutputDevice _midiOut = null!;
+    private MidiFile? _songData;
+    private Playback? _song;
+    private static readonly List<MidiFile> _songs = [];
 
-    public static int Pos { get; set; }
+    public int Pos { get; set; }
 
-    internal static DoomNativeAudio.MusicModule.Callbacks GetCallbacks()
-    {
-        return new()
-        {
-            Init = Init,
-            Shutdown = Shutdown,
-            IsPlaying = IsPlaying,
-            PlaySong = Play,
-            StopSong = Stop,
-            Pause = Pause,
-            Resume = Resume,
-            RegisterSong = RegisterSong,
-            UnRegisterSong = UnRegisterSong,
-            Poll = Poll,
-            SetVolume = SetVolume,
-        };
-    }
-
-    private static bool Init()
+    public bool Init()
     {
         _midiOut = new(0);
         return true;
     }
-
-    private static void Shutdown()
+    public void Shutdown()
     {
         _midiOut?.Dispose();
+        _songs.Clear();
     }
+
     [MemberNotNullWhen(true, nameof(_songData))]
-    private static bool IsPlaying() => _song is { IsRunning: true };
-    private static void Play(nint handle, bool looping)
+    public bool IsPlaying() => _song is { IsRunning: true };
+
+    public void Play(nint handle, bool looping)
     {
         _midiOut.Reset();
         _song!.Loop = looping;
         _song.MoveToStart();
         _song.Start();
     }
-    private static void Stop()
+    public void Stop()
     {
         _song!.Stop();
         _song.MoveToStart();
         _midiOut.Reset();
     }
 
-    private static void Pause()
-    {
-        _song?.Stop();
-    }
-    private static void Resume()
-    {
-        _song?.Play();
-    }
+    public void Pause() => _song?.Stop();
+    public void Resume() => _song?.Play();
 
-    private static unsafe nint RegisterSong(nint midiData, int len)
+    public nint RegisterSong(Stream midiStream)
     {
-        var stream = new UnmanagedMemoryStream((byte*)midiData.ToPointer(), len);
-        _songData = MidiFile.Read(stream);
+        _songData = MidiFile.Read(midiStream);
         _song = _songData.GetPlayback();
         _song.OutputDevice = _midiOut;
-        return midiData;
-    }
-    private static void UnRegisterSong(nint handle)
-    {
-        _song?.Dispose();
+        return 0;
     }
 
-    private static void Poll()
-    {
-    }
+    public void UnRegisterSong(nint handle) => _song?.Dispose();
 
-    private static void SetVolume(int volume)
+    public void Update() { }
+
+    public void SetVolume(float volume)
     {
         // the `midiOutSetVolume` windows API (used by MidiOut) actually sets the audio mixer volume (lol)
-        // _midiOut.Volume = volume * 65536 / 127;
+        // _midiOut.Volume = volume;
         _midiOut.MidiVolume = volume;
     }
 }

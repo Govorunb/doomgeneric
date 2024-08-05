@@ -8,12 +8,12 @@
 
 void DG_Init()
 {
-	INVOKE_CALLBACK(Init, DOOMGENERIC_RESX, DOOMGENERIC_RESY);
+	INVOKE_CALLBACK(Init, DG_ScreenBuffer, DOOMGENERIC_RESX, DOOMGENERIC_RESY);
 }
 
 void DG_DrawFrame()
 {
-	INVOKE_CALLBACK(DrawFrame, (unsigned char*)DG_ScreenBuffer, SCREENBUFFER_SIZE);
+	INVOKE_CALLBACK(DrawFrame);
 }
 
 void DG_SleepMs(uint32_t ms)
@@ -53,9 +53,7 @@ void DG_Log(const char* message)
 
 __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks)
 {
-	boolean overwrote = false;
 	if (Callbacks) {
-		overwrote = true;
 		DG_Log("Overwriting existing callbacks");
 		// notify the new logger as well (though it's debatable whether it should care)
 		INVOKE(callbacks, Log, "Overwrote existing callbacks");

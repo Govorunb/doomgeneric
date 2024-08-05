@@ -2,7 +2,7 @@
   "profiles": {
     "AvaloniaPlayer": {
       "commandName": "Project",
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }
