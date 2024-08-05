@@ -34,7 +34,7 @@ static dg_callbacks_t* Callbacks;
 #define DG_MALLOC_FAILED -99
 
 __declspec(dllexport) void SetCallbacks(dg_callbacks_t* callbacks);
-__declspec(dllexport) DG_ERROR Create(int argc, char** argv);
 __declspec(dllexport) void AddIWADPath(const char* dir);
 __declspec(dllexport) void SetFallbackIWADPath(const char* dir);
+__declspec(dllexport) DG_ERROR Create(int argc, char** argv);
 __declspec(dllexport) void Tick();

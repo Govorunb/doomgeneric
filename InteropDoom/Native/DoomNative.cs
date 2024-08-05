@@ -101,7 +101,7 @@ internal static class DoomNative
     [DllImport(DLL_NAME, EntryPoint = "Create",
         CallingConvention = CallingConvention.Cdecl,
         CharSet = CharSet.Ansi, BestFitMapping = false)]
-    private static extern void Native_Create(int argc, [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0, ArraySubType = UnmanagedType.LPStr)] string[] argv);
+    private static extern void Native_Create(int argc, string[] argv);
 
     [DllImport(DLL_NAME, EntryPoint = "AddIWADPath",
         CallingConvention = CallingConvention.Cdecl,
