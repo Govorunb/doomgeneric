@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using InteropDoom.Engine;
 using InteropDoom.Input;
@@ -32,14 +33,49 @@ partial class DoomRuntime
             return;
         }
         Stopwatch sw = Stopwatch.StartNew();
-        // todo refactor into an "engine"
-        DoomNativeEvents.SetEventCallbacks(new()
+        DoomNativeEvents.SetEventCallback(static (type, dataPtr) =>
         {
-            OnSecretDiscovered = (mapSector) => LogInfo("Discovered a secret!"),
-            // OnKill = (target, dealer) => LogInfo("Map object died"),
-            OnPlayerTookDamage = (player, dealer, dmgHealth, dmgArmor) => LogWarning($"Player took {dmgHealth + dmgArmor} damage. {dmgHealth} went straight to HP, while {dmgArmor} was saved by armor."),
-            OnLevelComplete = (ep, map) => LogInfo($"E{ep}M{map} complete"),
-            OnGameMessage = (msg) => LogInfo($"(Game) {msg}"),
+            // todo: obviously temporary code
+            switch (type)
+            {
+                case EventType.SecretDiscovered:
+                {
+                    var data = Marshal.PtrToStructure<SecretDiscovered>(dataPtr)!;
+                    LogInfo($"Discovered a secret! (sector {data.Sector:x})");
+                    break;
+                }
+                case EventType.LevelCompleted:
+                {
+                    var data = Marshal.PtrToStructure<LevelCompleted>(dataPtr)!;
+                    LogInfo($"Completed E{data.Episode}M{data.Map}");
+                    break;
+                }
+                case EventType.MapEntityKilled:
+                {
+                    var data = Marshal.PtrToStructure<MapEntityKilled>(dataPtr)!;
+                    LogInfo($"Map object {data.Victim:x} died (killed by {data.Killer:x})");
+                    break;
+                }
+                case EventType.MapEntityDamaged:
+                {
+                    var data = Marshal.PtrToStructure<MapEntityDamaged>(dataPtr)!;
+                    var totalDamage = data.HealthDamage + data.ArmorDamage;
+                    var message = $"Map entity {data.Victim:x} took {totalDamage} damage from {data.Dealer:x}.";
+                    if (data.ArmorDamage > 0)
+                        message += $" {data.HealthDamage} went straight to HP, while {data.ArmorDamage} was saved by armor.";
+                    LogWarning(message);
+                    break;
+                }
+                case EventType.GameMessage:
+                {
+                    var data = Marshal.PtrToStructure<GameMessage>(dataPtr)!;
+                    LogInfo($"(Game) {data.Text}");
+                    break;
+                }
+                default:
+                    LogError($"Unknown event type: {type}");
+                    break;
+            }
         });
         DoomNativeAudio.SetAudioCallbacks(GetSndCallbacks(), GetMusCallbacks());
         DoomNative.Callbacks engineCallbacks = GetEngineCallbacks();

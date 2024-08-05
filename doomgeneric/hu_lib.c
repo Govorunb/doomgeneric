@@ -213,12 +213,13 @@ HUlib_addMessageToSText
   char*		msg )
 {
     HUlib_addLineToSText(s);
-    if (prefix)
-	while (*prefix)
-	    HUlib_addCharToTextLine(&s->l[s->cl], *(prefix++));
+    if (prefix) {
+	    while (*prefix)
+	        HUlib_addCharToTextLine(&s->l[s->cl], *(prefix++));
+    }
 
     while (*msg)
-	HUlib_addCharToTextLine(&s->l[s->cl], *(msg++));
+        HUlib_addCharToTextLine(&s->l[s->cl], *(msg++));
     DG_OnGameMessage(s->l[s->cl].l);
 }
 

@@ -1,36 +1,39 @@
 #include "doomgeneric_interop_events.h"
 
-#define INVOKE_EVENT(func, ...) INVOKE(EventCallbacks, func, __VA_ARGS__)
+#define INVOKE_EVENT(event_type, ...) \
+if (!EventCallback) return; \
+event_##event_type##_t args_ = __VA_ARGS__; \
+EventCallback(event_type, &args_);
 
 void DG_OnSecretDiscovered(mapsector_t* sector)
 {
-	INVOKE_EVENT(OnSecretDiscovered, sector);
+	INVOKE_EVENT(secret_discovered, { sector });
 }
 
-void DG_OnKill(mobj_t* target, mobj_t* killer)
+void DG_OnMapEntityKilled(mobj_t* victim, mobj_t* killer)
 {
-	INVOKE_EVENT(OnKill, target, killer);
+	INVOKE_EVENT(map_entity_killed, { victim, killer });
 }
 
-void DG_OnPlayerTookDamage(mobj_t* plr, mobj_t* dealer, int health_dmg, int armor_dmg)
+void DG_OnMapEntityDamaged(mobj_t* victim, mobj_t* dealer, int health_dmg, int armor_dmg)
 {
-	INVOKE_EVENT(OnPlayerTookDamage, plr, dealer, health_dmg, armor_dmg);
+	INVOKE_EVENT(map_entity_damaged, { victim, dealer, health_dmg, armor_dmg });
 }
 
-void DG_OnLevelComplete(int episode, int map)
+void DG_OnLevelCompleted(int episode, int map)
 {
-	INVOKE_EVENT(OnLevelComplete, episode, map);
+	INVOKE_EVENT(level_completed, { episode, map });
 }
 
 void DG_OnGameMessage(char* msg)
 {
-	INVOKE_EVENT(OnGameMessage, msg);
+	INVOKE_EVENT(game_message, { msg });
 }
 
-void SetEventCallbacks(dg_event_callbacks_t* callbacks)
+void SetEventCallback(dg_event_callback_t* callback)
 {
-	if (EventCallbacks) {
-		DG_Log("Overwriting existing callbacks");
+	if (EventCallback) {
+		DG_Log("Overwriting existing event callback");
 	}
-	EventCallbacks = callbacks;
+	EventCallback = callback;
 }

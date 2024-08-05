@@ -2,7 +2,6 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using AvaloniaPlayer.Doom.Audio;
 using AvaloniaPlayer.Doom.Input;
 using InteropDoom;
 using InteropDoom.Input;
@@ -13,6 +12,7 @@ namespace AvaloniaPlayer.Doom.Screen;
 public class DoomScreen : UserControl
 {
     public IImage Screen { get; private set; } = null!;
+    public double MouseSensitivity { get; set; } = 2.5;
 
     public DoomScreen()
     {
@@ -65,24 +65,23 @@ public class DoomScreen : UserControl
     {
         var screenCenter = App.Current.MainWindow.Position + new PixelPoint((int)Bounds.Center.X, (int)Bounds.Center.Y);
         WinCursor.Position = new(screenCenter.X, screenCenter.Y);
-        _ignoreNextMove++;
+        _ignoreNextMove = true;
     }
 
     private Point _lastPos;
-    private double _mouseSensitivity = 2.5;
-    private int _ignoreNextMove;
+    private bool _ignoreNextMove;
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
         Point pos = e.GetCurrentPoint(null).Position;
-        Point delta = (pos - _lastPos) * _mouseSensitivity;
+        Point delta = (pos - _lastPos) * MouseSensitivity;
         _lastPos = pos;
 
         if (!App.Current.MainWindow.IsActive || !IsFocused)
             return;
-        if (_ignoreNextMove > 0)
+        if (_ignoreNextMove)
         {
-            _ignoreNextMove = 0;
+            _ignoreNextMove = false;
             return;
         }
 

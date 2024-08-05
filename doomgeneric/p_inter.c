@@ -714,7 +714,7 @@ P_KillMobj
 	
     }
 
-	DG_OnKill(target, source);
+	DG_OnMapEntityKilled(target, source);
 
     if (target->health < -target->info->spawnhealth 
 	&& target->info->xdeathstate)
@@ -879,7 +879,6 @@ P_DamageMobj
 	
 	player->attacker = source;
 	player->damagecount += damage;	// add damage after armor / invuln
-	DG_OnPlayerTookDamage(player, source, damage, saved);
 
 	if (player->damagecount > 100)
 	    player->damagecount = 100;	// teleport stomp does 10k points...
@@ -892,6 +891,7 @@ P_DamageMobj
     
     // do the damage	
     target->health -= damage;	
+	DG_OnMapEntityDamaged(target, source, damage, saved);
     if (target->health <= 0)
     {
 	P_KillMobj (source, target);

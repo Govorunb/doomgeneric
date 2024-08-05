@@ -1356,7 +1356,7 @@ void G_DoCompleted (void)
     if (automapactive) 
 	AM_Stop (); 
 	
-    DG_OnLevelComplete(gameepisode, gamemap);
+    DG_OnLevelCompleted(gameepisode, gamemap);
     if (gamemode != commercial)
     {
         // Chex Quest ends after 5 levels, rather than 8.

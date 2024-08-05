@@ -8,6 +8,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaPlayer", "AvaloniaPlayer\AvaloniaPlayer.csproj", "{84C55A94-99B8-47EF-BAAF-A75C6333E69A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InteropDoom", "InteropDoom\InteropDoom.csproj", "{F446C4C2-982A-4BA0-A3B9-441F24BA8D9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{95A126D2-CC94-4840-BF05-80305041B5FB} = {95A126D2-CC94-4840-BF05-80305041B5FB}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{FE5785D8-1F1C-4F6A-8FB9-018DBDD1E15C}"
 	ProjectSection(SolutionItems) = preProject

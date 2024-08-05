@@ -18,8 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.TimeProvider" Version="8.0.1" />
-    <Content Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*"
-             CopyToOutputDirectory="PreserveNewest" Visible="False" />
+    <Content Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*" CopyToOutputDirectory="PreserveNewest" Visible="False" />
   </ItemGroup>
 
   <!-- "polyfills" for netstandard2.0 -->
@@ -29,5 +28,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Native\Structures\" />
   </ItemGroup>
 </Project>

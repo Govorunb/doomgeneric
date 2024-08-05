@@ -3,21 +3,43 @@
 
 #ifdef FEATURE_EVENTS
 
-typedef	void (*SecretDiscoveredCallback)(mapsector_t* sector);
-typedef void (*KillCallback)(mobj_t* target, mobj_t* attacker);
-typedef void (*PlayerTookDamageCallback)(mobj_t* plr, mobj_t* dealer, int health_dmg, int armor_dmg);
-typedef void (*LevelCompleteCallback)(int episode, int map);
-typedef void (*GameMessageCallback)(char* msg);
+typedef enum {
+	secret_discovered,
+	level_completed,
+	map_entity_killed,
+	map_entity_damaged,
+	game_message,
+} event_type_t;
+
 typedef struct {
-	SecretDiscoveredCallback OnSecretDiscovered;
-	KillCallback OnKill;
-	PlayerTookDamageCallback OnPlayerTookDamage;
-	LevelCompleteCallback OnLevelComplete;
-	GameMessageCallback OnGameMessage;
-} dg_event_callbacks_t;
+	mapsector_t* sector;
+} event_secret_discovered_t;
 
-static dg_event_callbacks_t* EventCallbacks;
+typedef struct {
+	int episode;
+	int map;
+} event_level_completed_t;
 
-__declspec(dllexport) void SetEventCallbacks(dg_event_callbacks_t* callbacks);
+typedef struct {
+	mobj_t* target;
+	mobj_t* attacker;
+} event_map_entity_killed_t;
+
+typedef struct {
+	mobj_t* target;
+	mobj_t* attacker;
+	int health_dmg;
+	int armor_dmg;
+} event_map_entity_damaged_t;
+
+typedef struct {
+	char* msg;
+} event_game_message_t;
+
+typedef void dg_event_callback_t(event_type_t type, void* data);
+
+static dg_event_callback_t* EventCallback;
+
+__declspec(dllexport) void SetEventCallback(dg_event_callback_t* callback);
 
 #endif

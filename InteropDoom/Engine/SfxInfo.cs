@@ -8,8 +8,8 @@ public struct SfxInfo
 
     public readonly unsafe Stream ToStream()
     {
-        byte* ptr = (byte*)Data + 16 * sizeof(short); // first and last 16 bytes are padding (both get expanded to 32)
-        uint bytesLength = NumSamples * 2; // 16-bit PCM
+        var ptr = (byte*)Data + 16 * sizeof(short); // first and last 16 bytes are padding (both get expanded to 32)
+        var bytesLength = NumSamples * 2; // 16-bit PCM
         return new UnmanagedMemoryStream(ptr, bytesLength);
     }
 }
