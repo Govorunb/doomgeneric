@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using InteropDoom.Engine;
+using InteropDoom.Engine.Events;
 using InteropDoom.Input;
 using InteropDoom.Native;
 
@@ -33,50 +34,7 @@ partial class DoomRuntime
             return;
         }
         Stopwatch sw = Stopwatch.StartNew();
-        DoomNativeEvents.SetEventCallback(static (type, dataPtr) =>
-        {
-            // todo: obviously temporary code
-            switch (type)
-            {
-                case EventType.SecretDiscovered:
-                {
-                    var data = Marshal.PtrToStructure<SecretDiscovered>(dataPtr)!;
-                    LogInfo($"Discovered a secret! (sector {data.Sector:x})");
-                    break;
-                }
-                case EventType.LevelCompleted:
-                {
-                    var data = Marshal.PtrToStructure<LevelCompleted>(dataPtr)!;
-                    LogInfo($"Completed E{data.Episode}M{data.Map}");
-                    break;
-                }
-                case EventType.MapEntityKilled:
-                {
-                    var data = Marshal.PtrToStructure<MapEntityKilled>(dataPtr)!;
-                    LogInfo($"Map object {data.Victim:x} died (killed by {data.Killer:x})");
-                    break;
-                }
-                case EventType.MapEntityDamaged:
-                {
-                    var data = Marshal.PtrToStructure<MapEntityDamaged>(dataPtr)!;
-                    var totalDamage = data.HealthDamage + data.ArmorDamage;
-                    var message = $"Map entity {data.Victim:x} took {totalDamage} damage from {data.Dealer:x}.";
-                    if (data.ArmorDamage > 0)
-                        message += $" {data.HealthDamage} went straight to HP, while {data.ArmorDamage} was saved by armor.";
-                    LogWarning(message);
-                    break;
-                }
-                case EventType.GameMessage:
-                {
-                    var data = Marshal.PtrToStructure<GameMessage>(dataPtr)!;
-                    LogInfo($"(Game) {data.Text}");
-                    break;
-                }
-                default:
-                    LogError($"Unknown event type: {type}");
-                    break;
-            }
-        });
+        DoomNativeEvents.SetEventCallback(Evt_Handle);
         DoomNativeAudio.SetAudioCallbacks(GetSndCallbacks(), GetMusCallbacks());
         DoomNative.Callbacks engineCallbacks = GetEngineCallbacks();
         DoomNative.Start(engineCallbacks, _launchArgs);
@@ -282,4 +240,7 @@ partial class DoomRuntime
         => Engine.MusicEngine?.IsPlaying() ?? false;
     private static void Mus_Poll()
         => Engine.MusicEngine?.Update();
+
+    private static void Evt_Handle(EventType type, nint dataPtr)
+        => Engine.EventEngine?.DispatchEvent(type, dataPtr);
 }

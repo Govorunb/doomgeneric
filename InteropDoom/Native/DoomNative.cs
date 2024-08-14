@@ -23,6 +23,11 @@ internal static class DoomNative
     [StructLayout(LayoutKind.Sequential)]
     public struct Callbacks
     {
+        // note: using function pointers is (supposedly) more performant (according to MS)
+        // but (a) this is doom, there are no perf issues on even semi-modern hardware
+        // and (b) they make you give up on parameter names:
+        //public delegate* unmanaged[Cdecl]<out int, out int, out bool, out bool, out bool, out int> GetMouse;
+        // i mean just look at that, yuck
         public InitCallback Init;
         public DrawFrameCallback DrawFrame;
         public SleepCallback Sleep;
@@ -100,17 +105,17 @@ internal static class DoomNative
 
     [DllImport(DLL_NAME, EntryPoint = "Create",
         CallingConvention = CallingConvention.Cdecl,
-        CharSet = CharSet.Ansi, BestFitMapping = false)]
+        CharSet = CharSet.Ansi, BestFitMapping = false, ExactSpelling = true)]
     private static extern void Native_Create(int argc, string[] argv);
 
     [DllImport(DLL_NAME, EntryPoint = "AddIWADPath",
         CallingConvention = CallingConvention.Cdecl,
-        CharSet = CharSet.Ansi, BestFitMapping = false)]
+        CharSet = CharSet.Ansi, BestFitMapping = false, ExactSpelling = true)]
     private static extern void Native_AddIWADPath(string path);
 
     [DllImport(DLL_NAME, EntryPoint = "SetFallbackIWADPath",
         CallingConvention = CallingConvention.Cdecl,
-        CharSet = CharSet.Ansi, BestFitMapping = false)]
+        CharSet = CharSet.Ansi, BestFitMapping = false, ExactSpelling = true)]
     private static extern void Native_SetFallbackIWADPath(string path);
 
     [DllImport(DLL_NAME, EntryPoint = "Tick", CallingConvention = CallingConvention.Cdecl)]

@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using InteropDoom.Engine;
+using InteropDoom.Engine.Events;
 
 namespace InteropDoom.Native;
 internal static partial class DoomNativeEvents

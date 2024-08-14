@@ -1,4 +1,5 @@
 ﻿using AvaloniaPlayer.Doom.Audio;
+using AvaloniaPlayer.Doom.Events;
 using InteropDoom;
 
 namespace AvaloniaPlayer.Doom;
@@ -14,6 +15,7 @@ internal sealed class AvaloniaDoomEngine : DoomEngine
         SoundEngine = new SfxOutput();
         MusicEngine = new MusicOutput();
         Dispatcher = new AvaloniaMainThreadDispatcher();
+        EventEngine = new OurEventEngine(Logger);
         AudioOutput.Init();
     }
 

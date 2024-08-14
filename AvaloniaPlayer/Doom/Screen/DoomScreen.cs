@@ -45,7 +45,8 @@ public class DoomScreen : UserControl
 
     public override void Render(DrawingContext context)
     {
-        context.DrawImage(Screen, Bounds);
+        if (Screen is { })
+            context.DrawImage(Screen, Bounds);
         base.Render(context);
     }
     protected override void OnGotFocus(GotFocusEventArgs e)

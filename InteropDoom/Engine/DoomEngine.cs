@@ -18,6 +18,7 @@ public abstract class DoomEngine
     public IMainThreadDispatcher Dispatcher { get; set; } = AssumeMainThread.Instance;
     public ISoundEngine? SoundEngine { get; set; }
     public IMusicEngine? MusicEngine { get; set; }
+    public EventEngine? EventEngine { get; set; }
 }
 
 internal sealed class DefaultDoomEngine : DoomEngine
