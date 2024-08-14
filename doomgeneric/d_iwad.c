@@ -194,6 +194,7 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\doom 2\\base",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
+    "steamapps\\common\\ultimate doom\\base\\doom2",
     "steamapps\\common\\heretic shadow of the serpent riders\\base",
     "steamapps\\common\\hexen\\base",
     "steamapps\\common\\hexen deathkings of the dark citadel\\base",
@@ -215,7 +216,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
     char* path = reg_val->path;
     char* value = reg_val->value;
-#ifdef _WIN64
+#ifdef _WIN32
 	wchar_t wvalue[256];
     wchar_t wpath[256];
 
@@ -264,7 +265,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
             result = NULL;
         }
     }
-#if _WIN64
+#if _WIN32
     // Convert wchar_t* back to char*
     if (result != NULL)
     {
@@ -781,7 +782,7 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
         {
             result = SearchDirectoryForIWAD(iwad_dirs[i], mask, mission);
         }
-        if (result == NULL)
+        if (result == NULL && fallback_iwad_dir)
         {
             result = SearchDirectoryForIWAD(fallback_iwad_dir, mask, mission);
         }

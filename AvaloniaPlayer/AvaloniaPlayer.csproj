@@ -9,6 +9,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+    <Platforms>x64;x86</Platforms>
 
   </PropertyGroup>
 

@@ -12,7 +12,7 @@ typedef enum {
 } event_type_t;
 
 typedef struct {
-	mapsector_t* sector;
+	sector_t* sector;
 } event_secret_discovered_t;
 
 typedef struct {

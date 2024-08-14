@@ -7,18 +7,14 @@
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+    <Platforms>x64;x86</Platforms>
+    <NativePlatform Condition="'$(Platform)' == 'x86'">Win32</NativePlatform>
+    <NativePlatform Condition="'$(Platform)' == 'x64'">x64</NativePlatform>
   </PropertyGroup>
-
-  <Target Name="CopyBinaries" BeforeTargets="BeforeBuild">
-    <CreateItem Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*">
-      <Output TaskParameter="Include" ItemName="DoomBinary" />
-    </CreateItem>
-    <Copy SourceFiles="@(DoomBinary)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
-  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.TimeProvider" Version="8.0.1" />
-    <Content Include="$(MSBuildThisFileDirectory)../x64/$(Configuration)/doomgeneric.*" CopyToOutputDirectory="PreserveNewest" Visible="False" />
+    <Content Include="$(MSBuildThisFileDirectory)../$(NativePlatform)/$(Configuration)/doomgeneric.*" CopyToOutputDirectory="PreserveNewest" Visible="False" />
   </ItemGroup>
 
   <!-- "polyfills" for netstandard2.0 -->

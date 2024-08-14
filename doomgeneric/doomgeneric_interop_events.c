@@ -5,7 +5,7 @@ if (!EventCallback) return; \
 event_##event_type##_t args_ = __VA_ARGS__; \
 EventCallback(event_type, &args_);
 
-void DG_OnSecretDiscovered(mapsector_t* sector)
+void DG_OnSecretDiscovered(sector_t* sector)
 {
 	INVOKE_EVENT(secret_discovered, { sector });
 }

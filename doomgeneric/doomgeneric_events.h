@@ -1,10 +1,11 @@
-#include "p_mobj.h"
 #include "doomgeneric.h"
 #include "doomfeatures.h"
+#include "p_mobj.h"
+#include "r_defs.h"
 
 #ifdef FEATURE_EVENTS
 // The player crossed into a new "secret" special sector
-void DG_OnSecretDiscovered(mapsector_t* sector);
+void DG_OnSecretDiscovered(sector_t* sector);
 // Triggered when an entity dies
 // if killed by environment (e.g. crushed by ceiling), killer will be null
 void DG_OnMapEntityKilled(mobj_t* victim, mobj_t* killer);
