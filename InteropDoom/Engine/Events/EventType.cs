@@ -15,5 +15,5 @@ public enum EventType
     GameMessage = 4
 }
 
-// todo: marshal/wrap all the inner structs
-// Ctrl+F "nint" in this file
+// todo: marshal/wrap all of the structs inside the event data
+// see MapEntityProxy for an example

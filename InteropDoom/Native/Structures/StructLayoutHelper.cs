@@ -2,7 +2,7 @@
 
 internal unsafe readonly struct StructLayoutHelper
 {
-    public List<int> Offsets { get; }
+    public int[] Offsets { get; }
     public string Repr { get; }
     public int Alignment { get; }
 
@@ -13,7 +13,7 @@ internal unsafe readonly struct StructLayoutHelper
         
         Repr = repr;
         Alignment = align;
-        Offsets = new(repr.Length);
+        Offsets = new int[repr.Length];
         
         int offset = 0;
         for (int i = 0; i < repr.Length; i++)
@@ -25,17 +25,16 @@ internal unsafe readonly struct StructLayoutHelper
                 'i' => sizeof(int),
                 'l' => sizeof(long),
                 'p' => sizeof(nint),
-                '_' => 0, // ignored
-                _ => throw new InvalidOperationException("Invalid char in struct repr - allowed characters are: b (byte), s (short), i (int), l (long), p (nint), _ (ignored)")
+                _ => throw new InvalidOperationException("Invalid char in struct repr - allowed characters are: b (byte), s (short), i (int), l (long), p (nint)")
             };
-            if (size == 0) continue;
+
             var misalignment = offset % size;
             if (misalignment > 0)
             {
-                // align to size (e.g. {byte, int, byte, short, long} => (b...iiiib.ss....llllllll)
+                // align to size, e.g. "bibsl" => {byte, int, byte, short, long} => (b...iiiib.ss....llllllll)
                 offset += size - misalignment;
             }
-            Offsets.Add(offset);
+            Offsets[i] = offset;
             offset += size;
         }
     }
