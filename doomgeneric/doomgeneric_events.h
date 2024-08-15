@@ -5,7 +5,9 @@
 
 #ifdef FEATURE_EVENTS
 // The player crossed into a new "secret" special sector
-void DG_OnSecretDiscovered(sector_t* sector);
+void DG_OnSecretDiscovered(int count, int total);
+// Picked up an item that counts towards the level stats.
+void DG_OnItemPickedUp(int count, int total);
 // Triggered when an entity dies
 // if killed by environment (e.g. crushed by ceiling), killer will be null
 void DG_OnMapEntityKilled(mobj_t* victim, mobj_t* killer);

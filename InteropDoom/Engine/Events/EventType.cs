@@ -4,15 +4,17 @@
 public enum EventType
 {
     /// <summary><inheritdoc cref="Events.SecretDiscovered"/></summary>
-    SecretDiscovered = 0,
+    SecretDiscovered,
+    /// <summary><inheritdoc cref="Events.ItemPickedUp"/></summary>
+    ItemPickedUp,
     /// <summary><inheritdoc cref="Events.LevelCompleted"/></summary>
-    LevelCompleted = 1,
+    LevelCompleted,
     /// <summary><inheritdoc cref="Events.MapEntityKilled"/></summary>
-    MapEntityKilled = 2,
+    MapEntityKilled,
     /// <summary><inheritdoc cref="Events.MapEntityDamaged"/></summary>
-    MapEntityDamaged = 3,
+    MapEntityDamaged,
     /// <summary><inheritdoc cref="Events.GameMessage"/></summary>
-    GameMessage = 4
+    GameMessage
 }
 
 // todo: marshal/wrap all of the structs inside the event data

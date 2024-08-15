@@ -1059,7 +1059,7 @@ void P_PlayerInSpecialSector (player_t* player)
       case 9:
 	// SECRET SECTOR
 	player->secretcount++;
-	DG_OnSecretDiscovered(sector);
+	DG_OnSecretDiscovered(player->secretcount, totalsecret);
 	sector->special = 0;
 	break;
 			

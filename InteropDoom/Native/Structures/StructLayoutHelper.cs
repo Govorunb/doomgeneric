@@ -2,6 +2,8 @@
 
 internal unsafe readonly struct StructLayoutHelper
 {
+    // field offsets are 0-indexed
+    // they are also not exactly "field" indices but more like "primitive component" indices
     public int[] Offsets { get; }
     public string Repr { get; }
     public int Alignment { get; }

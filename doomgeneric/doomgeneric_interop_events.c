@@ -5,9 +5,14 @@ if (!EventCallback) return; \
 event_##event_type##_t args_ = __VA_ARGS__; \
 EventCallback(event_type, &args_);
 
-void DG_OnSecretDiscovered(sector_t* sector)
+void DG_OnSecretDiscovered(int count, int total)
 {
-	INVOKE_EVENT(secret_discovered, { sector });
+	INVOKE_EVENT(secret_discovered, { count, total });
+}
+
+void DG_OnItemPickedUp(int count, int total)
+{
+	INVOKE_EVENT(item_pickedup, { count, total });
 }
 
 void DG_OnMapEntityKilled(mobj_t* victim, mobj_t* killer)

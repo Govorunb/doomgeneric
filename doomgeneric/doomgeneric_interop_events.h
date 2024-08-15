@@ -5,6 +5,7 @@
 
 typedef enum {
 	secret_discovered,
+	item_pickedup,
 	level_completed,
 	map_entity_killed,
 	map_entity_damaged,
@@ -12,8 +13,14 @@ typedef enum {
 } event_type_t;
 
 typedef struct {
-	sector_t* sector;
+	int count;
+	int total;
 } event_secret_discovered_t;
+
+typedef struct {
+	int count;
+	int total;
+} event_item_pickedup_t;
 
 typedef struct {
 	int episode;

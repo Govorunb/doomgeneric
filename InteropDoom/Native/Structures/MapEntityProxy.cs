@@ -1,6 +1,6 @@
 ﻿using InteropDoom.Native.Definitions;
+using InteropDoom.Utilities;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace InteropDoom.Native.Structures;
 
@@ -13,9 +13,8 @@ namespace InteropDoom.Native.Structures;
 public unsafe readonly struct MapEntityProxy : IEquatable<MapEntityProxy>
 {
     private readonly nint _ptr;
+    internal MapEntityProxy(nint ptr) => _ptr = ptr;
 
-    // field offsets are 0-indexed
-    // they are also not exactly "field" indices but more like "primitive component" indices
     internal const string LayoutString
         = "ppp" //  0 - thinker struct (thinker* prev, thinker* next, func* function)
         + "iii" //  3 - position x,y,z
@@ -47,49 +46,14 @@ public unsafe readonly struct MapEntityProxy : IEquatable<MapEntityProxy>
     private static readonly int TargetOffset = _layout.Offsets[30];
     private static readonly int PlayerOffset = _layout.Offsets[33];
 
-    internal MapEntityProxy(nint ptr)
-    {
-        _ptr = ptr;
-    }
-
-    public readonly Vector3 Position => ReadVector3(PositionOffset);
-    public readonly Vector3 Velocity => ReadVector3(VelocityOffset);
-    public readonly MapEntityType Type => (MapEntityType)ReadInt32(TypeOffset);
-    // todo
-    // public readonly MapEntityInfoProxy Info => new(ReadPtr(InfoOffset));
-    public readonly int Health => ReadInt32(HealthOffset);
-    public readonly MapEntityProxy Target => new(ReadPtr(TargetOffset));
+    public readonly Vector3 Position => _ptr.ReadVector3(PositionOffset);
+    public readonly Vector3 Velocity => _ptr.ReadVector3(VelocityOffset);
+    public readonly MapEntityType Type => (MapEntityType)_ptr.ReadInt32(TypeOffset);
+    public readonly MapEntityInfoProxy Info => new(_ptr.ReadPtr(InfoOffset));
+    public readonly int Health => _ptr.ReadInt32(HealthOffset);
+    public readonly MapEntityProxy Target => new(_ptr.ReadPtr(TargetOffset));
     public readonly bool IsPlayer => Type == MapEntityType.MT_PLAYER;
-    // todo player proxy
-    // public readonly PlayerProxy Player => new(ReadPtr(PlayerOffset));
-
-    private void CheckInitialized()
-    {
-        if (_ptr == default)
-            throw new InvalidOperationException($"Unititialized {nameof(MapEntityProxy)}");
-    }
-
-    private int ReadInt32(int offset)
-    {
-        CheckInitialized();
-        return Marshal.ReadInt32(_ptr, offset);
-    }
-
-    private nint ReadPtr(int offset)
-    {
-        CheckInitialized();
-        return Marshal.ReadIntPtr(_ptr, offset);
-    }
-    private Vector3 ReadVector3(int offset)
-    {
-        CheckInitialized();
-        ReadOnlySpan<int> raw = new((int*)(_ptr + offset), 3);
-        return new(
-            FixedPoint.ToFloat(raw[0]),
-            FixedPoint.ToFloat(raw[1]),
-            FixedPoint.ToFloat(raw[2])
-        );
-    }
+    public readonly PlayerProxy Player => new(_ptr.ReadPtr(PlayerOffset));
 
     public bool Equals(MapEntityProxy other) => _ptr == other._ptr;
     public override bool Equals(object? obj) => obj is MapEntityProxy proxy && Equals(proxy);

@@ -1,5 +1,6 @@
 ﻿using InteropDoom.Engine.Events;
 using InteropDoom.Native.Definitions;
+using InteropDoom.Native.Structures;
 using InteropDoom.Utilities;
 
 namespace AvaloniaPlayer.Doom.Events;
@@ -42,7 +43,14 @@ internal class OurEntityEventHandler(ILogger logger) : EntityEventHandler(logger
         }
         else if (killerType == MapEntityType.MT_PLAYER)
         {
+            var player = data.Killer.Player;
+            if (player.CurrentWeapon == WeaponType.Chainsaw)
+                Logger?.LogWarning($"Fresh meat!");
+            
             Logger?.LogInfo($"Killed {data.Victim.Type}");
+            
+            if (player.HasKeycard(KeycardType.RedSkull))
+                Logger?.LogWarning($"The Red Skull absorbs the victim's soul...");
         }
     }
 }

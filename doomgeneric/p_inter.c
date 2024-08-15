@@ -650,8 +650,11 @@ P_TouchSpecialThing
 	I_Error ("P_SpecialThing: Unknown gettable thing");
     }
 	
-    if (special->flags & MF_COUNTITEM)
-	player->itemcount++;
+	if (special->flags & MF_COUNTITEM)
+	{
+		player->itemcount++;
+		DG_OnItemPickedUp(player->itemcount, totalitems);
+	}
     P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
     if (player == &players[consoleplayer])

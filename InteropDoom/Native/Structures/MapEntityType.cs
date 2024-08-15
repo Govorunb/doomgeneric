@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace InteropDoom.Native.Definitions;
+﻿namespace InteropDoom.Native.Definitions;
 public enum MapEntityType
 {
     MT_PLAYER,

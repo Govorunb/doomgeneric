@@ -19,6 +19,7 @@ public abstract class EventEngine
         {
             // map events
             [EventType.SecretDiscovered] = (dataPtr) => MapEventHandler?.Handle(dataPtr.ToStruct<SecretDiscovered>()),
+            [EventType.ItemPickedUp] = (dataPtr) => MapEventHandler?.Handle(dataPtr.ToStruct<ItemPickedUp>()),
             [EventType.LevelCompleted] = (dataPtr) => MapEventHandler?.Handle(dataPtr.ToStruct<LevelCompleted>()),
             // entity events
             [EventType.MapEntityDamaged] = (dataPtr) => EntityEventHandler?.Handle(dataPtr.ToStruct<MapEntityDamaged>()),
